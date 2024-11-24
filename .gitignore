@@ -78,3 +78,7 @@ pip-log.txt
 *.~*
 *.bak
 *.tmp
+
+# Secrets
+secrets.json
+secret.json
