@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import Exercise, UserWorkout, WorkoutExercise
-from .serializers import ExerciseSerializer, UserWorkoutSerializer, WorkoutExerciseSerializer
+from apps.workouts.models import Exercise, UserWorkout, WorkoutExercise
+from apps.workouts.serializers import ExerciseSerializer, UserWorkoutSerializer, WorkoutExerciseSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class ExerciseListView(generics.ListAPIView):
