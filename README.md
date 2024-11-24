@@ -139,6 +139,191 @@ Email Already Exists:
 }
 ```
 
+### List all user preferences
+
+**GET** `/api/users/preferences/`
+
+#### Description:
+
+Retrieves a list of all preferences set by the authenticated user. Each preference is linked to a gym and specifies the maximum acceptable crowd level.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "preferences": [
+    {
+      "preference_id": 1,
+      "user": 1,
+      "gym": 2,
+      "max_crowd_level": 0.8,
+      "created_at": "2024-11-24T18:00:00Z"
+    },
+    {
+      "preference_id": 2,
+      "user": 1,
+      "gym": 3,
+      "max_crowd_level": 0.6,
+      "created_at": "2024-11-25T18:00:00Z"
+    }
+  ]
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+---
+
+### Create a new user preference
+
+**POST** `/api/users/preferences/`
+
+#### Description:
+
+Allows the authenticated user to create a new gym preference. This includes specifying the gym and the maximum acceptable crowd level.
+
+#### Request Body
+
+```json
+{
+  "gym": 2,
+  "max_crowd_level": 0.8
+}
+```
+
+#### Success Response
+
+**Status Code:** `201 Created`
+
+```json
+{
+  "preference_id": 1,
+  "user": 1,
+  "gym": 2,
+  "max_crowd_level": 0.8,
+  "created_at": "2024-11-24T18:00:00Z"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+```json
+{
+  "error": "Gym and max_crowd_level are required."
+}
+```
+
+2. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+---
+
+### Update a user preference
+
+**PUT** `/api/users/preferences/<preference_id>/`
+
+#### Description:
+
+Allows the authenticated user to update an existing gym preference. This includes modifying the gym or the maximum acceptable crowd level.
+
+#### Request Body
+
+```json
+{
+  "gym": 3,
+  "max_crowd_level": 0.7
+}
+```
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "preference_id": 1,
+  "user": 1,
+  "gym": 3,
+  "max_crowd_level": 0.7,
+  "updated_at": "2024-11-25T18:30:00Z"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+```json
+{
+  "error": "Invalid fields provided."
+}
+```
+
+2. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+3. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Preference not found."
+}
+```
+
+---
+
+### Delete a user preference
+
+**DELETE** `/api/users/preferences/<preference_id>/`
+
+#### Description:
+
+Allows the authenticated user to delete an existing gym preference.
+
+#### Success Response
+
+**Status Code:** `204 No Content`
+
+#### Error Responses
+
+1. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+2. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Preference not found."
+}
+```
+
 ---
 
 ## Gym Endpoints
