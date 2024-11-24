@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from apps.users.models import User
+from apps.users.models import User, UserPreference
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.hashers import make_password
-from apps.users.serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
+from apps.users.serializers import UserSerializer, UserPreferenceSerializer
 
 class UserLoginView(APIView):
     """
@@ -91,3 +93,31 @@ class UserSignUpView(APIView):
                 {"error": f"Failed to create account: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+
+class UserPreferenceListCreateView(generics.ListCreateAPIView):
+    """
+    GET: List all preferences for the authenticated user.
+    POST: Create a new preference for the authenticated user.
+    """
+    serializer_class = UserPreferenceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserPreference.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class UserPreferenceDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific preference by ID.
+    PUT/PATCH: Update an existing preference.
+    DELETE: Delete a preference.
+    """
+    serializer_class = UserPreferenceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserPreference.objects.filter(user=self.request.user)
