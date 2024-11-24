@@ -87,6 +87,3 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['user_id', 'name', 'email', 'preferences', 'workouts', 'notifications']
-        extra_kwargs = {
-            'user_id': {'source': 'pk', 'read_only': True}
-        }
