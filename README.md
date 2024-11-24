@@ -1,6 +1,6 @@
 # API Specification
 
-Contributors: Backend Team
+Contributors: Adeeb Khan, Arjun Maitra, Ethan Zhang
 
 ## NOTE ABOUT ERROR RESPONSES
 
