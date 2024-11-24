@@ -281,3 +281,383 @@ Fetches details of a specific crowd data entry by its ID.
 }
 ```
 
+---
+
+## Workout Endpoints
+
+### List all exercises
+
+**GET** `/api/workouts/exercises/`
+
+#### Description:
+
+Fetches a list of all available exercises in the system.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "exercises": [
+    {
+      "exercise_id": <EXERCISE_ID>,
+      "name": "<EXERCISE_NAME>",
+      "body_part": "<BODY_PART>",
+      "equipment": "<EQUIPMENT>",
+      "gif_url": "<GIF_URL>",
+      "target": "<TARGET>",
+      "secondary_muscles": "<SECONDARY_MUSCLES>",
+      "instructions": "<INSTRUCTIONS>"
+    },
+    ...
+  ]
+}
+```
+
+---
+
+### Get a specific exercise
+
+**GET** `/api/workouts/exercises/<exercise_id>/`
+
+#### Description:
+
+Fetches details of a specific exercise by its ID.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "exercise_id": <EXERCISE_ID>,
+  "name": "<EXERCISE_NAME>",
+  "body_part": "<BODY_PART>",
+  "equipment": "<EQUIPMENT>",
+  "gif_url": "<GIF_URL>",
+  "target": "<TARGET>",
+  "secondary_muscles": "<SECONDARY_MUSCLES>",
+  "instructions": "<INSTRUCTIONS>"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Exercise not found."
+}
+```
+
+---
+
+### List all user workouts
+
+**GET** `/api/workouts/`
+
+#### Description:
+
+Fetches a list of all workout sessions for the authenticated user.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "workouts": [
+    {
+      "workout_id": <WORKOUT_ID>,
+      "user": <USER_ID>,
+      "date": "<WORKOUT_DATE>",
+      "created_at": "<CREATED_AT>",
+      "workout_exercises": [
+        {
+          "entry_id": <ENTRY_ID>,
+          "exercise": <EXERCISE_ID>,
+          "sets": <SETS>,
+          "reps": <REPS>,
+          "weight": <WEIGHT>
+        },
+        ...
+      ]
+    },
+    ...
+  ]
+}
+```
+
+---
+
+### Create a new workout session
+
+**POST** `/api/workouts/`
+
+#### Description:
+
+Creates a new workout session for the authenticated user.
+
+#### Request Body
+
+```json
+{
+  "date": "<WORKOUT_DATE>",
+  "workout_exercises": [
+    {
+      "exercise": <EXERCISE_ID>,
+      "sets": <SETS>,
+      "reps": <REPS>,
+      "weight": <WEIGHT>
+    },
+    ...
+  ]
+}
+```
+
+#### Success Response
+
+**Status Code:** `201 Created`
+
+```json
+{
+  "workout_id": <WORKOUT_ID>,
+  "user": <USER_ID>,
+  "date": "<WORKOUT_DATE>",
+  "created_at": "<CREATED_AT>",
+  "workout_exercises": [
+    {
+      "entry_id": <ENTRY_ID>,
+      "exercise": <EXERCISE_ID>,
+      "sets": <SETS>,
+      "reps": <REPS>,
+      "weight": <WEIGHT>
+    },
+    ...
+  ]
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+```json
+{
+  "error": "Invalid or missing fields in request."
+}
+```
+
+---
+
+### Get details of a specific workout
+
+**GET** `/api/workouts/<workout_id>/`
+
+#### Description:
+
+Fetches details of a specific workout session by its ID.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "workout_id": <WORKOUT_ID>,
+  "user": <USER_ID>,
+  "date": "<WORKOUT_DATE>",
+  "created_at": "<CREATED_AT>",
+  "workout_exercises": [
+    {
+      "entry_id": <ENTRY_ID>,
+      "exercise": <EXERCISE_ID>,
+      "sets": <SETS>,
+      "reps": <REPS>,
+      "weight": <WEIGHT>
+    },
+    ...
+  ]
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Workout not found."
+}
+```
+
+---
+
+### List all exercises in user workouts
+
+**GET** `/api/workout-exercises/`
+
+#### Description:
+
+Fetches all exercises logged in the authenticated user's workouts.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "workout_exercises": [
+    {
+      "entry_id": <ENTRY_ID>,
+      "workout": <WORKOUT_ID>,
+      "exercise": <EXERCISE_ID>,
+      "sets": <SETS>,
+      "reps": <REPS>,
+      "weight": <WEIGHT>
+    },
+    ...
+  ]
+}
+```
+
+---
+
+## Notification Endpoints
+
+### List all notifications
+
+**GET** `/api/notifications/`
+
+#### Description:
+
+Fetches a list of all notifications for the authenticated user.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "notifications": [
+    {
+      "notification_id": <NOTIFICATION_ID>,
+      "user": <USER_ID>,
+      "gym": <GYM_ID>,
+      "message": "<MESSAGE>",
+      "sent_at": "<SENT_AT>"
+    },
+    ...
+  ]
+}
+```
+
+---
+
+### Create a notification
+
+**POST** `/api/notifications/`
+
+#### Description:
+
+Creates a new notification for a user about a specific gym.
+
+#### Request Body
+
+```json
+{
+  "user": <USER_ID>,
+  "gym": <GYM_ID>,
+  "message": "<MESSAGE>"
+}
+```
+
+#### Success Response
+
+**Status Code:** `201 Created`
+
+```json
+{
+  "notification_id": <NOTIFICATION_ID>,
+  "user": <USER_ID>,
+  "gym": <GYM_ID>,
+  "message": "<MESSAGE>",
+  "sent_at": "<SENT_AT>"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+{
+  "error": "Invalid or missing fields in request."
+}
+
+---
+
+### Get a specific notification
+
+**GET** `/api/notifications/<notification_id>/`
+
+#### Description:
+
+Fetches details of a specific notification by its ID.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "notification_id": <NOTIFICATION_ID>,
+  "user": <USER_ID>,
+  "gym": <GYM_ID>,
+  "message": "<MESSAGE>",
+  "sent_at": "<SENT_AT>"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Notification not found."
+}
+```
+
+---
+
+### Delete a notification
+
+**DELETE** `/api/notifications/<notification_id>/`
+
+#### Description:
+
+Deletes a specific notification by its ID.
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "notification_id": <NOTIFICATION_ID>,
+  "message": "Notification deleted successfully."
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `404 Not Found`
+
+```json
+{
+  "error": "Notification not found."
+}
+```
+
