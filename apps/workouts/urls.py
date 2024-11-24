@@ -3,9 +3,9 @@ from .views import ExerciseListView, ExerciseDetailView, UserWorkoutListCreateVi
 
 
 urlpatterns = [
-    path('exercises/', ExerciseListView.as_view(), name='exercise-list'),  # Route for all exercises
-    path('exercises/<int:exercise_id>/', ExerciseDetailView.as_view(), name='exercise-detail'),  # Route for specific exercise
-    path('workouts/', UserWorkoutListCreateView.as_view(), name='user-workout-list-create'),
-    path('workouts/<int:pk>/', UserWorkoutDetailView.as_view(), name='user-workout-detail'),
-    path('workout-exercises/', WorkoutExerciseListCreateView.as_view(), name='workout-exercise-list-create'),
+    path('exercises/', ExerciseListView.as_view(), name='exercise-list'),  # GET all exercises
+    path('exercises/<int:exercise_id>/', ExerciseDetailView.as_view(), name='exercise-detail'),  # GET specific exercise
+    path('', UserWorkoutListCreateView.as_view(), name='user-workout-list-create'),  # POST and GET workouts
+    path('<int:pk>/', UserWorkoutDetailView.as_view(), name='user-workout-detail'),  # GET specific workout
+    path('workout-exercises/', WorkoutExerciseListCreateView.as_view(), name='workout-exercise-list-create'),  # POST and GET exercises for workouts
 ]
