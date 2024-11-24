@@ -1,0 +1,80 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+
+# Django specific
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+*.db
+
+# Django secret key
+.env
+
+# Migrations
+**/migrations/*
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.cache/
+.nox/
+pytest_cache/
+__pycache__/
+
+# Testing
+*.pytest_cache
+*.tox
+coverage.xml
+nosetests.xml
+test_results/
+
+# Python package files
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Logs and debug output
+*.log
+*.out
+*.err
+
+# Dependencies
+*.lock
+pip-log.txt
+
+# Deployment
+*.bak
+*.orig
+*.save
+
+# Caches
+*.~*
+*.bak
+*.tmp
