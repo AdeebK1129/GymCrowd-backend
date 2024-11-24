@@ -10,7 +10,7 @@ class GymListView(generics.ListAPIView):
 class GymDetailView(generics.RetrieveAPIView):
     queryset = Gym.objects.prefetch_related("crowd_data").all()
     serializer_class = GymSerializer
-    lookup_field = "id"
+    lookup_field = "gym_id"
 
 class CrowdDataListView(generics.ListCreateAPIView):
     """
