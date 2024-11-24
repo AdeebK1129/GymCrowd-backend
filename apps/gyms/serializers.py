@@ -8,7 +8,7 @@ facilitate data exchange between the client and server while adhering to validat
 rules and nested relationships.
 
 The serializers include:
-1. `CrowdDataSerializer` - Serializes crowd data related to gym occupancy levels.
+1. `CrowdDataSerializer` - Serializes crowd data, including gym occupancy and percentage full.
 2. `GymSerializer` - Serializes gym details, including nested crowd data and references 
    to user preferences and notifications by their primary keys.
 
@@ -29,8 +29,8 @@ class CrowdDataSerializer(serializers.ModelSerializer):
     Serializer for the `CrowdData` model.
 
     This serializer handles the conversion of `CrowdData` model instances into a structured
-    representation (e.g., JSON) and vice versa. It links crowd data to its associated `Gym`
-    model using a primary key reference.
+    representation (e.g., JSON) and vice versa. It includes fields for the gym's occupancy
+    (number of people), percentage full, and the last updated timestamp.
 
     Attributes:
         gym (PrimaryKeyRelatedField): A reference to the `Gym` model, allowing the API to
@@ -41,7 +41,8 @@ class CrowdDataSerializer(serializers.ModelSerializer):
         fields (list[str]): A list of fields included in the serialized representation:
             - `crowd_id`: The unique identifier of the crowd data entry.
             - `gym`: The primary key of the associated gym.
-            - `occupancy`: The occupancy percentage of the gym.
+            - `occupancy`: The number of people currently checked into the gym.
+            - `percentage_full`: The percentage of gym capacity in use (nullable).
             - `last_updated`: Timestamp of when the crowd data was last updated.
 
     Example:
@@ -49,7 +50,8 @@ class CrowdDataSerializer(serializers.ModelSerializer):
         {
             "crowd_id": 42,
             "gym": 3,
-            "occupancy": 0.85,
+            "occupancy": 32,
+            "percentage_full": 64.0,
             "last_updated": "2024-01-01T15:00:00Z"
         }
     """
@@ -58,7 +60,7 @@ class CrowdDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CrowdData
-        fields = ['crowd_id', 'gym', 'occupancy', 'last_updated']
+        fields = ['crowd_id', 'gym', 'occupancy', 'percentage_full', 'last_updated']
 
 
 class GymSerializer(serializers.ModelSerializer):
@@ -100,7 +102,8 @@ class GymSerializer(serializers.ModelSerializer):
                 {
                     "crowd_id": 42,
                     "gym": 1,
-                    "occupancy": 0.75,
+                    "occupancy": 32,
+                    "percentage_full": 64.0,
                     "last_updated": "2024-01-01T15:00:00Z"
                 }
             ],

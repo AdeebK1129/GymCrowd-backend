@@ -6,11 +6,10 @@ The models are used to persist data and establish relationships between gyms and
 
 Classes:
 1. `Gym` - Represents a gym, including its name, location, type, and creation date.
-2. `CrowdData` - Represents crowd data for a gym, including occupancy and the timestamp of the last update.
+2. `CrowdData` - Represents crowd data for a gym, including occupancy, percentage full, and the timestamp of the last update.
 
 Relationships:
-- `CrowdData` has a many-to-one relationship with `Gym`, enabling each gym to have multiple
-  crowd data entries.
+- `CrowdData` has a many-to-one relationship with `Gym`, enabling each gym to have multiple crowd data entries.
 
 Dependencies:
 - `django.db.models`: Provides the base `Model` class and field types for defining attributes.
@@ -71,16 +70,18 @@ class CrowdData(models.Model):
     """
     Represents crowd data for a gym.
 
-    This model stores information about gym occupancy, including the percentage of the gym
-    currently occupied and the timestamp of the last update. The data is linked to a specific
-    gym through a foreign key relationship.
+    This model stores information about gym occupancy, including the number of people checked in,
+    the percentage full, and the timestamp of the last update. The data is linked to a specific
+    gym through a foreign key relationship. The `percentage_full` field is nullable to handle cases
+    where no data is available (e.g., when the gym is closed).
 
     Attributes:
         crowd_id (AutoField): Primary key for the crowd data entry, auto-incremented.
         gym (ForeignKey): A reference to the associated `Gym` model, establishing a many-to-one
             relationship. If a gym is deleted, all related crowd data entries are also deleted.
-        occupancy (FloatField): The occupancy percentage of the gym, represented as a float
-            (e.g., 0.75 for 75% occupancy).
+        occupancy (IntegerField): The number of people currently checked into the gym.
+        percentage_full (FloatField): The percentage of gym capacity currently in use, represented
+            as a float (e.g., 64.0 for 64%). This field is nullable and may be blank if no data is available.
         last_updated (DateTimeField): Timestamp of the most recent update to the crowd data.
 
     Relationships:
@@ -89,7 +90,7 @@ class CrowdData(models.Model):
             - Reverse relation: `gym.crowd_data` retrieves all associated crowd data entries.
 
     Methods:
-        __str__(): Returns a formatted string combining the gym name and occupancy percentage.
+        __str__(): Returns a formatted string combining the gym name, occupancy, and percentage full.
 
     Example:
         A crowd data entry might represent:
@@ -100,7 +101,8 @@ class CrowdData(models.Model):
                 "gym_id": 1,
                 "name": "Downtown Gym"
             },
-            "occupancy": 0.75,
+            "occupancy": 32,
+            "percentage_full": 64.0,
             "last_updated": "2024-01-01T15:00:00Z"
         }
         ```
@@ -108,8 +110,11 @@ class CrowdData(models.Model):
 
     crowd_id = models.AutoField(primary_key=True)
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='crowd_data')
-    occupancy = models.FloatField()
+    occupancy = models.IntegerField()  # Number of people checked in
+    percentage_full = models.FloatField(null=True, blank=True)  # Nullable percentage full
     last_updated = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.gym.name} - {self.occupancy * 100:.2f}%"
+        occupancy_str = f"{self.occupancy} people"
+        percentage_str = f"{self.percentage_full:.2f}%" if self.percentage_full is not None else "NA"
+        return f"{self.gym.name} - {occupancy_str}, {percentage_str}"
