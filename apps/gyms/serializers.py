@@ -9,13 +9,12 @@ rules and nested relationships.
 
 The serializers include:
 1. `CrowdDataSerializer` - Serializes crowd data related to gym occupancy levels.
-2. `GymSerializer` - Serializes gym details, including nested crowd data, user preferences,
-   and notifications.
+2. `GymSerializer` - Serializes gym details, including nested crowd data and references 
+   to user preferences and notifications by their primary keys.
 
 Dependencies:
-- `rest_framework.serializers`: Base classes for defining DRF serializers.
-- Other serializers (`UserPreferenceSerializer` and `NotificationSerializer`)
-  are imported to handle nested representations.
+- `rest_framework.serializers`: Provides base classes for defining serializers.
+- To avoid circular imports, nested relationships use `PrimaryKeyRelatedField` for user preferences and notifications.
 
 Each serializer ensures data integrity, enforces read-only or write-specific behaviors,
 and defines the structure of API responses.
@@ -23,8 +22,6 @@ and defines the structure of API responses.
 
 from rest_framework import serializers
 from apps.gyms.models import Gym, CrowdData
-from apps.users.serializers import UserPreferenceSerializer
-from apps.notifications.serializers import NotificationSerializer
 
 
 class CrowdDataSerializer(serializers.ModelSerializer):
@@ -33,7 +30,7 @@ class CrowdDataSerializer(serializers.ModelSerializer):
 
     This serializer handles the conversion of `CrowdData` model instances into a structured
     representation (e.g., JSON) and vice versa. It links crowd data to its associated `Gym`
-    model and is designed for use in both API responses and request validation.
+    model using a primary key reference.
 
     Attributes:
         gym (PrimaryKeyRelatedField): A reference to the `Gym` model, allowing the API to
@@ -69,21 +66,17 @@ class GymSerializer(serializers.ModelSerializer):
     Serializer for the `Gym` model.
 
     This serializer provides a structured representation of gym data, including nested
-    representations for related models such as crowd data, user preferences, and notifications.
-    It is designed to support read-only nested relationships, ensuring that related data is
-    correctly structured for API responses.
+    representations for related crowd data and references to user preferences and notifications 
+    by their primary keys.
 
     Attributes:
         crowd_data (CrowdDataSerializer): A nested serializer for crowd data associated with the gym.
             - `many=True`: Indicates that a gym can have multiple crowd data entries.
             - `read_only=True`: Ensures that crowd data is included for read-only purposes.
-        user_preferences (UserPreferenceSerializer): A nested serializer for user preferences linked
-            to the gym.
-            - `many=True`: Indicates that a gym can be linked to multiple user preferences.
-            - `read_only=True`: Ensures that user preferences are included for read-only purposes.
-        notifications (NotificationSerializer): A nested serializer for notifications related to the gym.
-            - `many=True`: Indicates that a gym can have multiple notifications.
-            - `read_only=True`: Ensures that notifications are included for read-only purposes.
+        user_preferences (PrimaryKeyRelatedField): References to user preferences linked to the gym,
+            represented by their primary keys. Avoids importing `UserPreferenceSerializer`.
+        notifications (PrimaryKeyRelatedField): References to notifications related to the gym,
+            represented by their primary keys. Avoids importing `NotificationSerializer`.
 
     Meta:
         model (Gym): Specifies the `Gym` model for serialization.
@@ -93,8 +86,8 @@ class GymSerializer(serializers.ModelSerializer):
             - `location`: The address or location of the gym.
             - `type`: The category or type of the gym (e.g., fitness, yoga).
             - `crowd_data`: A nested representation of associated crowd data entries.
-            - `user_preferences`: A nested representation of associated user preferences.
-            - `notifications`: A nested representation of associated notifications.
+            - `user_preferences`: References to associated user preferences by primary key.
+            - `notifications`: References to associated notifications by primary key.
 
     Example:
         Serialized Response:
@@ -111,34 +104,14 @@ class GymSerializer(serializers.ModelSerializer):
                     "last_updated": "2024-01-01T15:00:00Z"
                 }
             ],
-            "user_preferences": [
-                {
-                    "preference_id": 5,
-                    "user": 12,
-                    "gym": {
-                        "gym_id": 1,
-                        "name": "Downtown Gym",
-                        "location": "123 Main Street, Cityville",
-                        "type": "Fitness"
-                    },
-                    "max_crowd_level": 0.5,
-                    "created_at": "2024-01-01T12:00:00Z"
-                }
-            ],
-            "notifications": [
-                {
-                    "notification_id": 8,
-                    "title": "Class Canceled",
-                    "message": "Today's yoga class has been canceled.",
-                    "created_at": "2024-01-01T10:00:00Z"
-                }
-            ]
+            "user_preferences": [12, 15],
+            "notifications": [8, 9]
         }
     """
 
     crowd_data = CrowdDataSerializer(many=True, read_only=True)
-    user_preferences = UserPreferenceSerializer(many=True, read_only=True)
-    notifications = NotificationSerializer(many=True, read_only=True)
+    user_preferences = serializers.PrimaryKeyRelatedField(many=True, read_only=True)  # Reference by primary key
+    notifications = serializers.PrimaryKeyRelatedField(many=True, read_only=True)  # Reference by primary key
 
     class Meta:
         model = Gym
