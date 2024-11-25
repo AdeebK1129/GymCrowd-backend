@@ -242,7 +242,7 @@ Authorization: Token `<USER_TOKEN>`
 
 ---
 
-### List all user preferences
+### List All User Preferences
 
 **GET** `/api/users/preferences/`
 
@@ -291,7 +291,7 @@ Authorization: Token `<USER_TOKEN>`
 
 ---
 
-### Create a new user preference
+### Create a New User Preference
 
 **POST** `/api/users/preferences/`
 
