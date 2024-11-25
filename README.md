@@ -61,6 +61,7 @@ Before running this project, ensure you have the following installed on your sys
     ```
 
 4. Create a `secrets.json` file inside the `gymcrowd` directory with the following structure:
+   ```json
     {
       "environment": "development", 
       "database_name": "your-database-name",
@@ -69,10 +70,11 @@ Before running this project, ensure you have the following installed on your sys
       "database_host": "localhost",
       "database_port": "5432"
     }
+   ```
 
     Replace the placeholder values with your PostgreSQL database information.
 
-5. Run migrations and start the Django development server:
+6. Run migrations and start the Django development server:
     ```bash
     python manage.py migrate
     python manage.py runserver
@@ -117,6 +119,7 @@ Before running this project, ensure you have the following installed on your sys
 
 ### **Testing the Connection**
 Ensure the `secrets.json` file has the proper database credentials:
+```json
 {
     "environment": "development", 
     "database_name": "your-database-name",
@@ -125,6 +128,7 @@ Ensure the `secrets.json` file has the proper database credentials:
     "database_host": "localhost",
     "database_port": "5432"
 }
+```
 
 Run the following command to verify the connection:
 ```bash
@@ -132,6 +136,14 @@ python manage.py runserver
 ```
 
 ## **Usage**
+
+### **Migrate Models**
+To configure models to your database run the following commands:
+
+```bash
+python manage.py makemigrations
+pytohn manage.py migrate
+```
 
 ### **Start the Development Server**
 To start the development server, run the following command:
