@@ -20,7 +20,7 @@ The server should return an error response for:
 
 ## User Endpoints
 
-### Log in a user
+### Log in a User
 
 **POST** `/api/users/login/`
 
@@ -45,6 +45,7 @@ Validates user credentials (username and password) and logs the user into the ap
 {
   "user": {
     "user_id": <USER_ID>,
+    "username": "<USER_USERNAME>",
     "name": "<USER_NAME>",
     "email": "<USER_EMAIL>",
     "preferences": [],
@@ -75,7 +76,7 @@ Validates user credentials (username and password) and logs the user into the ap
 
 ---
 
-### Retrieve a user token
+### Retrieve a User Token
 
 **POST** `/api/users/token/`
 
@@ -99,10 +100,15 @@ Generates a token for an authenticated user. The token is used for authenticatin
 ```json
 {
   "token": "<USER_TOKEN>",
-  "user_id": <USER_ID>,
-  "name": "<USER_NAME>",
-  "email": "<USER_EMAIL>",
-  "username": "<USER_USERNAME>"
+  "user": {
+    "user_id": <USER_ID>,
+    "username": "<USER_USERNAME>",
+    "name": "<USER_NAME>",
+    "email": "<USER_EMAIL>",
+    "preferences": [],
+    "workouts": [],
+    "notifications": []
+  }
 }
 ```
 
@@ -152,10 +158,10 @@ Allows users to create a new account by providing their name, email, username, a
 ```json
 {
   "user": {
-    "user_id": <USER_ID>,
+    "user_id": "<USER_ID>",
+    "username": "<USER_USERNAME>",
     "name": "<USER_NAME>",
     "email": "<USER_EMAIL>",
-    "username": "<USER_USERNAME>",
     "preferences": [],
     "workouts": [],
     "notifications": []
@@ -197,6 +203,40 @@ Username Already Exists:
 ```json
 {
   "error": "Failed to create account: <ERROR_MESSAGE>"
+}
+```
+
+---
+
+### Log Out a User
+
+**POST** `/api/users/logout/`
+
+#### Description:
+
+Logs the user out by deleting the authentication token associated with their account.
+
+#### Headers
+
+Authorization: Token `<USER_TOKEN>`
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "message": "Logout successful."
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `401 Unauthorized`
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
 }
 ```
 
@@ -306,7 +346,7 @@ Authorization: Token `<USER_TOKEN>`
 
 ---
 
-### Update a user preference
+### Update a User Preference
 
 **PUT** `/api/users/preferences/<preference_id>/`
 
@@ -369,7 +409,7 @@ Authorization: Token `<USER_TOKEN>`
 
 ---
 
-### Delete a user preference
+### Delete a User Preference
 
 **DELETE** `/api/users/preferences/<preference_id>/`
 
@@ -413,7 +453,7 @@ Authorization: Token `<USER_TOKEN>`
 
 ## Gym Endpoints
 
-### List all gyms
+### List All Gyms
 
 **GET** `/api/gyms/`
 
@@ -449,7 +489,7 @@ Fetches a list of all gyms in the system, including their details and associated
 
 ---
 
-### Get a specific gym
+### Get a Specific Gym
 
 **GET** `/api/gyms/<id>/`
 
@@ -490,7 +530,7 @@ Fetches the details of a specific gym by its ID, including associated crowd data
 
 ---
 
-### List all crowd data entries
+### List All Crowd Data Entries
 
 **GET** `/api/gyms/crowddata/`
 
@@ -519,7 +559,7 @@ Fetches a list of all crowd data entries in the system.
 
 ---
 
-### Get a specific crowd data entry
+### Get a Specific Crowd Data Entry
 
 **GET** `/api/gyms/crowddata/<id>/`
 
@@ -555,7 +595,7 @@ Fetches details of a specific crowd data entry by its ID.
 
 ## Workout Endpoints
 
-### List all exercises
+### List All Exercises
 
 **GET** `/api/workouts/exercises/`
 
@@ -591,7 +631,7 @@ No authentication required.
 
 ---
 
-### Get a specific exercise
+### Get a Specific Exercise
 
 **GET** `/api/workouts/exercises/<exercise_id>/`
 
@@ -632,7 +672,7 @@ No authentication required.
 
 ---
 
-### List all user workouts
+### List All User Workouts
 
 **GET** `/api/workouts/`
 
@@ -678,7 +718,7 @@ A token in the header.
 
 ---
 
-### Create a new workout session
+### Create a New Workout Session
 
 **POST** `/api/workouts/`
 
@@ -728,7 +768,7 @@ A token in the header.
 
 ---
 
-### Get details of a specific workout
+### Get Details of a Specific Workout
 
 **GET** `/api/workouts/<workout_id>/`
 
@@ -779,7 +819,7 @@ A token in the header.
 
 ---
 
-### List all exercises in user workouts
+### List All Exercises in User Workouts
 
 **GET** `/api/workouts/workout-exercises/`
 
@@ -817,7 +857,7 @@ A token in the header.
 
 ---
 
-### Add an exercise to a workout
+### Add an Exercise to a Workout
 
 **POST** `/api/workouts/workout-exercises/`
 
@@ -882,7 +922,7 @@ A token in the header.
 
 ## Notifications Endpoints
 
-### List all notifications
+### List All Notifications
 
 **GET** `/api/notifications/`
 
@@ -915,7 +955,7 @@ No authentication required.
 
 ---
 
-### Create a new notification
+### Create a New Notification
 
 **POST** `/api/notifications/`
 
@@ -966,7 +1006,7 @@ A token in the header.
 
 ---
 
-### Get a specific notification
+### Get a Specific Notification
 
 **GET** `/api/notifications/<notification_id>/`
 
@@ -1008,7 +1048,7 @@ A token in the header.
 
 ---
 
-### List notifications for a user
+### List Notifications for a User
 
 **GET** `/api/notifications/user/<user_id>/`
 
