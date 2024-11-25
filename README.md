@@ -45,8 +45,8 @@ Before running this project, ensure you have the following installed on your sys
 ### **Backend Setup**
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/gymcrowd.git
-    cd gymcrowd
+    git clone git@github.com:<YOUR_USERNAME>/GymCrowd-backend.git
+    cd GymCrowd-backend
     ```
 
 2. Create and activate a virtual environment:
