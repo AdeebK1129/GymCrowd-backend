@@ -237,7 +237,7 @@ Validates user credentials (username and password) and logs the user into the ap
 
 #### Description:
 
-Generates a token for an authenticated user. The token is used for authenticating protected API endpoints.
+Generates a token for an authenticated user. The token is used for authenticating protected API endpoints. Note that this route can also be used for user login.
 
 #### Request Body
 
