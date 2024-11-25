@@ -26,7 +26,7 @@ GymCrowd is a gym management and workout tracking platform tailored for fitness 
 - [Installation](#installation)
 - [PostgreSQL Setup](#postgresql-setup)
 - [Usage](#usage)
-- [API Endpoints](#api-endpoints)
+- [API Endpoints](#api-specification)
 
 ## **Getting Started**
 
