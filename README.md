@@ -26,13 +26,13 @@ The server should return an error response for:
 
 #### Description:
 
-Validates user credentials (email and password) and logs the user into the application if the credentials are valid.
+Validates user credentials (username and password) and logs the user into the application if the credentials are valid.
 
 #### Request Body
 
 ```json
 {
-  "email": "user@example.com",
+  "username": "user123",
   "password": "securepassword123"
 }
 ```
@@ -61,7 +61,7 @@ Validates user credentials (email and password) and logs the user into the appli
 
 ```json
 {
-  "error": "Email and password are required."
+  "error": "Username and password are required."
 }
 ```
 
@@ -69,26 +69,74 @@ Validates user credentials (email and password) and logs the user into the appli
 
 ```json
 {
-  "error": "Invalid email or password."
+  "error": "Invalid username or password."
 }
 ```
 
 ---
 
-### Register a new user
+### Retrieve a user token
 
-**POST** `/api/users/signup/`
+**POST** `/api/users/token/`
 
 #### Description:
 
-Allows users to create a new account by providing their name, email, and password. Passwords are hashed before being stored in the database.
+Generates a token for an authenticated user. The token is used for authenticating protected API endpoints.
 
 #### Request Body
 
 ```json
 {
-  "name": "John Doe",
-  "email": "johndoe@example.com",
+  "username": "<USER_USERNAME>",
+  "password": "securepassword123"
+}
+```
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "token": "<USER_TOKEN>",
+  "user_id": <USER_ID>,
+  "name": "<USER_NAME>",
+  "email": "<USER_EMAIL>",
+  "username": "<USER_USERNAME>"
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+```json
+{
+  "error": "Username and password are required."
+}
+```
+
+2. **Status Code:** `401 Unauthorized`
+
+```json
+{
+  "error": "Invalid username or password."
+}
+```
+
+**POST** `/api/users/signup/`
+
+#### Description:
+
+Allows users to create a new account by providing their name, email, username, and password. Passwords are hashed before being stored in the database.
+
+#### Request Body
+
+```json
+{
+  "name": "<USER_NAME>",
+  "email": "<USER_EMAIL>",
+  "username": "<USER_USERNAME>",
   "password": "securepassword123"
 }
 ```
@@ -99,10 +147,7 @@ Allows users to create a new account by providing their name, email, and passwor
 
 ```json
 {
-  "user": {
-    "user_id": <USER_ID>,
-    "name": "John Doe",
-    "email": "johndoe@example.com",
+  "user": { "user_id": <USER_ID>, "name": "<USER_NAME>", "email": "<USER_EMAIL>", "username": "<USER_USERNAME>",
     "preferences": [],
     "workouts": [],
     "notifications": []
@@ -119,7 +164,7 @@ Missing Fields:
 
 ```json
 {
-  "error": "Name, email, and password are required."
+  "error": "Name, email, username, and password are required."
 }
 ```
 
@@ -128,6 +173,14 @@ Email Already Exists:
 ```json
 {
   "error": "An account with this email already exists."
+}
+```
+
+Username Already Exists:
+
+```json
+{
+  "error": "An account with this username already exists."
 }
 ```
 
