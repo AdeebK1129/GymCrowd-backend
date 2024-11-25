@@ -22,6 +22,8 @@ and defines the structure of API responses.
 
 from rest_framework import serializers
 from apps.users.models import User, UserPreference
+from apps.workouts.models import UserWorkout
+from apps.notifications.models import Notification
 
 
 class UserPreferenceSerializer(serializers.ModelSerializer):
@@ -81,8 +83,8 @@ class UserSerializer(serializers.ModelSerializer):
     """
 
     preferences = UserPreferenceSerializer(many=True, read_only=True)
-    workouts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    notifications = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    workouts = serializers.PrimaryKeyRelatedField(many=True, queryset=UserWorkout.objects.all())
+    notifications = serializers.PrimaryKeyRelatedField(many=True, queryset=Notification.objects.all())
 
     class Meta:
         model = User

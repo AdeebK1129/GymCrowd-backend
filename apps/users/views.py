@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from apps.users.serializers import UserSerializer, UserPreferenceSerializer
 from django.contrib.auth import authenticate
+from django.utils.timezone import now
 
 
 class UserLoginView(APIView):
@@ -26,23 +27,17 @@ class UserLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        try:
-            # Retrieve the user by username
-            user = User.objects.get(username=username)
+        user = authenticate(request=request, username=username, password=password)
+        if user is not None:
+            user.last_login = now()
+            user.save()
 
-            # Verify the password
-            if user.check_password(password):
-                serializer = UserSerializer(user)
-                return Response(
-                    {"user": serializer.data, "message": "Login successful."},
-                    status=status.HTTP_200_OK,
-                )
-            else:
-                return Response(
-                    {"error": "Invalid username or password."},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-        except User.DoesNotExist:
+            serializer = UserSerializer(user)
+            return Response(
+                {"user": serializer.data, "message": "Login successful."},
+                status=status.HTTP_200_OK,
+            )
+        else:
             return Response(
                 {"error": "Invalid username or password."},
                 status=status.HTTP_401_UNAUTHORIZED,
@@ -110,6 +105,32 @@ class UserSignUpView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+class UserLogoutView(APIView):
+    """
+    Handle user logout requests.
+
+    This view deletes the token associated with the authenticated user,
+    effectively logging them out.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            request.user.auth_token.delete()
+            request.user.is_active = False
+            request.user.save()
+
+            return Response(
+                {"message": "Logout successful."},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class ObtainAuthTokenWithUserDetails(APIView):
     """
@@ -118,7 +139,6 @@ class ObtainAuthTokenWithUserDetails(APIView):
     Users log in with their `username` and `password`. If valid, a token is returned
     along with the user details.
     """
-
     def post(self, request, *args, **kwargs):
         username = request.data.get("username")
         password = request.data.get("password")
@@ -129,20 +149,16 @@ class ObtainAuthTokenWithUserDetails(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Authenticate the user
         user = authenticate(request=request, username=username, password=password)
-
         if user is not None:
-            # Fetch or create the token for the authenticated user
+            user.last_login = now()
+            user.save()
+
             token, _ = Token.objects.get_or_create(user=user)
+            serializer = UserSerializer(user)
 
             return Response(
-                {
-                    "token": token.key,
-                    "user_id": user.user_id,
-                    "username": user.username,
-                    "email": user.email,
-                },
+                {"token": token.key, "user": serializer.data},
                 status=status.HTTP_200_OK,
             )
         else:
