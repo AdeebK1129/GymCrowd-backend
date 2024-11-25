@@ -124,6 +124,10 @@ Generates a token for an authenticated user. The token is used for authenticatin
 }
 ```
 
+---
+
+### Sign up a new user
+
 **POST** `/api/users/signup/`
 
 #### Description:
@@ -147,7 +151,11 @@ Allows users to create a new account by providing their name, email, username, a
 
 ```json
 {
-  "user": { "user_id": <USER_ID>, "name": "<USER_NAME>", "email": "<USER_EMAIL>", "username": "<USER_USERNAME>",
+  "user": {
+    "user_id": <USER_ID>,
+    "name": "<USER_NAME>",
+    "email": "<USER_EMAIL>",
+    "username": "<USER_USERNAME>",
     "preferences": [],
     "workouts": [],
     "notifications": []
@@ -192,6 +200,8 @@ Username Already Exists:
 }
 ```
 
+---
+
 ### List all user preferences
 
 **GET** `/api/users/preferences/`
@@ -199,6 +209,10 @@ Username Already Exists:
 #### Description:
 
 Retrieves a list of all preferences set by the authenticated user. Each preference is linked to a gym and specifies the maximum acceptable crowd level.
+
+#### Headers
+
+Authorization: Token `<USER_TOKEN>`
 
 #### Success Response
 
@@ -244,6 +258,10 @@ Retrieves a list of all preferences set by the authenticated user. Each preferen
 #### Description:
 
 Allows the authenticated user to create a new gym preference. This includes specifying the gym and the maximum acceptable crowd level.
+
+#### Headers
+
+Authorization: Token `<USER_TOKEN>`
 
 #### Request Body
 
@@ -295,6 +313,10 @@ Allows the authenticated user to create a new gym preference. This includes spec
 #### Description:
 
 Allows the authenticated user to update an existing gym preference. This includes modifying the gym or the maximum acceptable crowd level.
+
+#### Headers
+
+Authorization: Token `<USER_TOKEN>`
 
 #### Request Body
 
@@ -355,9 +377,19 @@ Allows the authenticated user to update an existing gym preference. This include
 
 Allows the authenticated user to delete an existing gym preference.
 
+#### Headers
+
+Authorization: Token `<USER_TOKEN>`
+
 #### Success Response
 
-**Status Code:** `204 No Content`
+**Status Code:** `200 OK`
+
+```json
+{
+  "message": "Preference deleted successfully."
+}
+```
 
 #### Error Responses
 
