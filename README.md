@@ -563,6 +563,10 @@ Fetches details of a specific crowd data entry by its ID.
 
 Fetches a list of all available exercises in the system.
 
+#### Requires:
+
+No authentication required.
+
 #### Success Response
 
 **Status Code:** `200 OK`
@@ -594,6 +598,10 @@ Fetches a list of all available exercises in the system.
 #### Description:
 
 Fetches details of a specific exercise by its ID.
+
+#### Requires:
+
+No authentication required.
 
 #### Success Response
 
@@ -631,6 +639,14 @@ Fetches details of a specific exercise by its ID.
 #### Description:
 
 Fetches a list of all workout sessions for the authenticated user.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
 
 #### Success Response
 
@@ -670,20 +686,19 @@ Fetches a list of all workout sessions for the authenticated user.
 
 Creates a new workout session for the authenticated user.
 
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
+
 #### Request Body
 
 ```json
 {
-  "date": "<WORKOUT_DATE>",
-  "workout_exercises": [
-    {
-      "exercise": <EXERCISE_ID>,
-      "sets": <SETS>,
-      "reps": <REPS>,
-      "weight": <WEIGHT>
-    },
-    ...
-  ]
+  "date": "<WORKOUT_DATE>"
 }
 ```
 
@@ -697,16 +712,7 @@ Creates a new workout session for the authenticated user.
   "user": <USER_ID>,
   "date": "<WORKOUT_DATE>",
   "created_at": "<CREATED_AT>",
-  "workout_exercises": [
-    {
-      "entry_id": <ENTRY_ID>,
-      "exercise": <EXERCISE_ID>,
-      "sets": <SETS>,
-      "reps": <REPS>,
-      "weight": <WEIGHT>
-    },
-    ...
-  ]
+  "workout_exercises": []
 }
 ```
 
@@ -729,6 +735,14 @@ Creates a new workout session for the authenticated user.
 #### Description:
 
 Fetches details of a specific workout session by its ID.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
 
 #### Success Response
 
@@ -767,11 +781,19 @@ Fetches details of a specific workout session by its ID.
 
 ### List all exercises in user workouts
 
-**GET** `/api/workout-exercises/`
+**GET** `/api/workouts/workout-exercises/`
 
 #### Description:
 
 Fetches all exercises logged in the authenticated user's workouts.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
 
 #### Success Response
 
@@ -790,6 +812,69 @@ Fetches all exercises logged in the authenticated user's workouts.
     },
     ...
   ]
+}
+```
+
+---
+
+### Add an exercise to a workout
+
+**POST** `/api/workouts/workout-exercises/`
+
+#### Description:
+
+Adds a new exercise entry to a specific workout session for the authenticated user.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
+
+#### Request Body
+
+```json
+{
+  "workout": <WORKOUT_ID>,
+  "exercise": <EXERCISE_ID>,
+  "sets": <SETS>,
+  "reps": <REPS>,
+  "weight": <WEIGHT>
+}
+```
+
+#### Success Response
+
+**Status Code:** `201 Created`
+
+```json
+{
+  "entry_id": <ENTRY_ID>,
+  "workout": <WORKOUT_ID>,
+  "exercise": <EXERCISE_ID>,
+  "sets": <SETS>,
+  "reps": <REPS>,
+  "weight": <WEIGHT>
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `400 Bad Request`
+
+```json
+{
+  "error": "Invalid or missing fields in request."
+}
+```
+
+2. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "error": "You do not have permission to add exercises to this workout."
 }
 ```
 
