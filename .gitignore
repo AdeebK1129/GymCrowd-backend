@@ -18,8 +18,10 @@ db.sqlite3
 *.sqlite3
 *.db
 
-# Django secret key
+# Secrets
 .env
+secrets.json
+secret.json
 
 # Migrations
 **/migrations/*
@@ -78,7 +80,3 @@ pip-log.txt
 *.~*
 *.bak
 *.tmp
-
-# Secrets
-secrets.json
-secret.json
