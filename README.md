@@ -1,3 +1,158 @@
+# **GymCrowd**
+
+## **Overview**
+
+GymCrowd is a gym management and workout tracking platform tailored for fitness enthusiasts. The platform enables users to log workouts, set gym crowd level preferences, and receive notifications about gym activities. With robust user authentication and real-time updates, GymCrowd ensures a personalized and secure fitness experience.
+
+## **Features**
+- **User Authentication**: Secure user sign-up, login, token-based authentication, and logout functionality.
+- **Workout Tracking**: Log workouts, add exercises to specific sessions, and view detailed workout histories.
+- **Gym Preferences**: Set maximum acceptable crowd levels for gyms and customize preferences.
+- **Notifications**: Receive notifications for updates, alerts, and gym crowd statuses.
+- **Real-Time Updates**: Stay informed with the latest gym crowd data and activity alerts.
+
+## **Project Structure**
+
+### **Backend (Django + PostgreSQL)**
+- **Django**: Backend framework for robust application logic.
+- **Django REST Framework (DRF)**: Handles API endpoints for communication with the frontend.
+- **PostgreSQL**: Relational database for storing user, workout, and notification data.
+- **RESTful API Design**: Provides a modular and scalable backend structure.
+
+## **Table of Contents**
+
+- [Getting Started](#getting-started)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [PostgreSQL Setup](#postgresql-setup)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+
+## **Getting Started**
+
+### **Prerequisites**
+Before running this project, ensure you have the following installed on your system:
+- **Python** (>=3.8)
+- **PostgreSQL** (>=13.x)
+- **pip** (Python package manager)
+
+### **Tech Stack**
+- **Backend**: Django, Django REST Framework
+- **Database**: PostgreSQL
+
+## **Installation**
+
+### **Backend Setup**
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/gymcrowd.git
+    cd gymcrowd
+    ```
+
+2. Create and activate a virtual environment:
+    ```bash
+    python -m venv env
+    source env/bin/activate  # On Windows use `env\Scripts\activate`
+    ```
+
+3. Install the dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Create a `secrets.json` file inside the `gymcrowd` directory with the following structure:
+    {
+      "environment": "development", 
+      "database_name": "your-database-name",
+      "database_user": "your-database-user",
+      "database_password": "your-database-password",
+      "database_host": "localhost",
+      "database_port": "5432"
+    }
+
+    Replace the placeholder values with your PostgreSQL database information.
+
+5. Run migrations and start the Django development server:
+    ```bash
+    python manage.py migrate
+    python manage.py runserver
+    ```
+
+---
+
+## **PostgreSQL Setup**
+
+### **Installing PostgreSQL**
+1. Download and install PostgreSQL from the [official website](https://www.postgresql.org/).
+2. Follow the installation wizard and set up the following:
+   - **Username**: Choose a database admin username (e.g., `postgres`).
+   - **Password**: Set a strong password for the admin account.
+   - **Port**: Use the default port `5432` or customize as needed.
+
+### **Configuring PostgreSQL**
+1. Log into the PostgreSQL terminal:
+    ```bash
+    psql -U postgres
+    ```
+
+2. Create a new database:
+    ```sql
+    CREATE DATABASE gymcrowd;
+    ```
+
+3. Create a new user with a password:
+    ```sql
+    CREATE USER gymcrowd_user WITH PASSWORD 'your-password';
+    ```
+
+4. Grant privileges to the new user:
+    ```sql
+    GRANT ALL PRIVILEGES ON DATABASE gymcrowd TO gymcrowd_user;
+    ```
+
+5. Exit the PostgreSQL terminal:
+    ```bash
+    \q
+    ```
+
+### **Testing the Connection**
+Ensure the `secrets.json` file has the proper database credentials:
+{
+    "environment": "development", 
+    "database_name": "your-database-name",
+    "database_user": "your-database-user",
+    "database_password": "your-database-password",
+    "database_host": "localhost",
+    "database_port": "5432"
+}
+
+Run the following command to verify the connection:
+```bash
+python manage.py runserver
+```
+
+## **Usage**
+
+### **Start the Development Server**
+To start the development server, run the following command:
+
+```bash
+python manage.py runserver
+```
+
+### **Access the Application**
+Once the server is running, you can access the application at:
+[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+### **Test the API**
+Use an API client like **Postman** or **cURL** to test the API endpoints. Make sure to include appropriate headers (e.g., Authorization tokens) where required.
+
+### **Explore the Features**
+- **User Authentication**: Sign up, log in, retrieve tokens, and log out.
+- **Workout Management**: Add workouts, track exercises, and retrieve workout history.
+- **Gym Preferences**: Set and update gym crowd level preferences.
+- **Notifications**: Receive notifications about gym activities and updates.
+
 # API Specification
 
 Contributors: Adeeb Khan, Arjun Maitra, Ethan Zhang
