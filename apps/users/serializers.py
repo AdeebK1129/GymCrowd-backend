@@ -45,7 +45,7 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
             - `created_at`: Timestamp of when the preference was created.
     """
 
-    gym = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = UserPreference

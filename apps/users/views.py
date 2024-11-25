@@ -178,4 +178,10 @@ class UserPreferenceDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return UserPreference.objects.filter(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Preference deleted successfully."}, status=status.HTTP_200_OK)
+
     

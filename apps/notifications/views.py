@@ -27,6 +27,9 @@ class NotificationListCreateView(generics.ListCreateAPIView):
             return [IsAuthenticated()]
         return []
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class NotificationDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

@@ -20,6 +20,8 @@ and ensures accurate structuring of API responses for notifications-related endp
 
 from rest_framework import serializers
 from apps.notifications.models import Notification
+from apps.users.models import User
+from apps.gyms.models import Gym
 
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -56,9 +58,8 @@ class NotificationSerializer(serializers.ModelSerializer):
             "sent_at": "2024-01-01T12:00:00Z"
         }
     """
-
-    user = serializers.PrimaryKeyRelatedField(read_only=True)  # Reference to the user by primary key
-    gym = serializers.PrimaryKeyRelatedField(read_only=True)  # Reference to the gym by primary key
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    gym = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all(), read_only=False)
 
     class Meta:
         model = Notification

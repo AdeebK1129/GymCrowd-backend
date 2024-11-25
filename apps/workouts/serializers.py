@@ -108,7 +108,7 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
         }
     """
 
-    exercise = ExerciseSerializer(read_only=True)
+    exercise = serializers.PrimaryKeyRelatedField(queryset=Exercise.objects.all())
 
     class Meta:
         model = WorkoutExercise
