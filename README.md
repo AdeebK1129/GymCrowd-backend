@@ -880,7 +880,7 @@ A token in the header.
 
 ---
 
-## Notification Endpoints
+## Notifications Endpoints
 
 ### List all notifications
 
@@ -888,7 +888,11 @@ A token in the header.
 
 #### Description:
 
-Fetches a list of all notifications for the authenticated user.
+Fetches a list of all notifications in the system.
+
+#### Requires:
+
+No authentication required.
 
 #### Success Response
 
@@ -898,11 +902,11 @@ Fetches a list of all notifications for the authenticated user.
 {
   "notifications": [
     {
-      "notification_id": <NOTIFICATION_ID>,
-      "user": <USER_ID>,
-      "gym": <GYM_ID>,
-      "message": "<MESSAGE>",
-      "sent_at": "<SENT_AT>"
+      "notification_id": 1,
+      "user": 12,
+      "gym": 3,
+      "message": "Your session is confirmed.",
+      "sent_at": "2024-01-01T12:00:00Z"
     },
     ...
   ]
@@ -911,21 +915,28 @@ Fetches a list of all notifications for the authenticated user.
 
 ---
 
-### Create a notification
+### Create a new notification
 
 **POST** `/api/notifications/`
 
 #### Description:
 
-Creates a new notification for a user about a specific gym.
+Creates a new notification associated with the authenticated user.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
 
 #### Request Body
 
 ```json
 {
-  "user": <USER_ID>,
   "gym": <GYM_ID>,
-  "message": "<MESSAGE>"
+  "message": "<NOTIFICATION_MESSAGE>"
 }
 ```
 
@@ -938,8 +949,8 @@ Creates a new notification for a user about a specific gym.
   "notification_id": <NOTIFICATION_ID>,
   "user": <USER_ID>,
   "gym": <GYM_ID>,
-  "message": "<MESSAGE>",
-  "sent_at": "<SENT_AT>"
+  "message": "<NOTIFICATION_MESSAGE>",
+  "sent_at": "<TIMESTAMP>"
 }
 ```
 
@@ -947,9 +958,11 @@ Creates a new notification for a user about a specific gym.
 
 1. **Status Code:** `400 Bad Request`
 
+```json
 {
   "error": "Invalid or missing fields in request."
 }
+```
 
 ---
 
@@ -961,6 +974,14 @@ Creates a new notification for a user about a specific gym.
 
 Fetches details of a specific notification by its ID.
 
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
+
 #### Success Response
 
 **Status Code:** `200 OK`
@@ -970,8 +991,8 @@ Fetches details of a specific notification by its ID.
   "notification_id": <NOTIFICATION_ID>,
   "user": <USER_ID>,
   "gym": <GYM_ID>,
-  "message": "<MESSAGE>",
-  "sent_at": "<SENT_AT>"
+  "message": "<NOTIFICATION_MESSAGE>",
+  "sent_at": "<TIMESTAMP>"
 }
 ```
 
@@ -982,6 +1003,52 @@ Fetches details of a specific notification by its ID.
 ```json
 {
   "error": "Notification not found."
+}
+```
+
+---
+
+### List notifications for a user
+
+**GET** `/api/notifications/user/<user_id>/`
+
+#### Description:
+
+Fetches all notifications for a specific user.
+
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
+
+#### Success Response
+
+**Status Code:** `200 OK`
+
+```json
+{
+  "notifications": [
+    {
+      "notification_id": 1,
+      "gym": 3,
+      "message": "Your session is confirmed.",
+      "sent_at": "2024-01-01T12:00:00Z"
+    },
+    ...
+  ]
+}
+```
+
+#### Error Responses
+
+1. **Status Code:** `403 Forbidden`
+
+```json
+{
+  "error": "You do not have permission to view these notifications."
 }
 ```
 
@@ -995,16 +1062,17 @@ Fetches details of a specific notification by its ID.
 
 Deletes a specific notification by its ID.
 
+#### Requires:
+
+A token in the header.
+
+**Header:**
+
+`Authorization: Token <USER_TOKEN>`
+
 #### Success Response
 
-**Status Code:** `200 OK`
-
-```json
-{
-  "notification_id": <NOTIFICATION_ID>,
-  "message": "Notification deleted successfully."
-}
-```
+**Status Code:** `204 No Content`
 
 #### Error Responses
 
@@ -1015,4 +1083,3 @@ Deletes a specific notification by its ID.
   "error": "Notification not found."
 }
 ```
-
