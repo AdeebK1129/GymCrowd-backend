@@ -117,13 +117,16 @@ class UserLogoutView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            # Delete the token associated with the user
             request.user.auth_token.delete()
-            request.user.is_active = False
-            request.user.save()
-
             return Response(
                 {"message": "Logout successful."},
                 status=status.HTTP_200_OK,
+            )
+        except Token.DoesNotExist:
+            return Response(
+                {"error": "No token found for this user."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
@@ -154,11 +157,14 @@ class ObtainAuthTokenWithUserDetails(APIView):
             user.last_login = now()
             user.save()
 
-            token, _ = Token.objects.get_or_create(user=user)
-            serializer = UserSerializer(user)
+            # Delete existing token if it exists
+            Token.objects.filter(user=user).delete()
+            # Create a new token
+            token = Token.objects.create(user=user)
 
+            serializer = UserSerializer(user)
             return Response(
-                {"token": token.key, "user": serializer.data},
+                {"token": token.key, "user": serializer.data, "message": "Login successful."},
                 status=status.HTTP_200_OK,
             )
         else:

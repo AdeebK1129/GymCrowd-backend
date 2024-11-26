@@ -43,12 +43,6 @@ def get_secret(setting, secrets=secrets):
     except KeyError:
         raise ImproperlyConfigured(f"Set the {setting} environment variable.")
 
-# Quick-start development settings - unsuitable for production
-SECRET_KEY = 'django-insecure-key'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -128,13 +122,20 @@ WSGI_APPLICATION = 'gymcrowd.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': get_secret('database_name'),
-        'USER': get_secret('database_user'),
-        'PASSWORD': get_secret('database_pwd'),
-        'HOST': get_secret('database_host'),
-        'PORT': get_secret('database_port'),
+        'NAME': os.getenv('DATABASE_NAME', 'GymCrowd'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.getenv('DATABASE_PWD', 'password'),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
+
+# Quick-start development settings - unsuitable for production
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
