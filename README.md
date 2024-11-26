@@ -43,46 +43,39 @@ Before running this project, ensure you have the following installed on your sys
 ## **Installation**
 
 ### **Backend Setup**
+
 1. Clone the repository:
+
     ```bash
-    git clone https://github.com/your-username/gymcrowd.git
-    cd gymcrowd
+    git clone git@github.com:<YOUR_USERNAME>/GymCrowd-backend.git
+    cd GymCrowd-backend
     ```
 
-2. Create and activate a virtual environment:
-    ```bash
-    python -m venv env
-    source env/bin/activate  # On Windows use `env\Scripts\activate`
+2. Create a `.env` file in the root directory with the following structure:
+
+    ```ini
+    DATABASE_NAME=GymCrowd
+    DATABASE_USER=postgres
+    DATABASE_PWD=password
+    DATABASE_HOST=gymcrowd-db
+    DATABASE_PORT=5432
+    DEBUG=True
+    SECRET_KEY=django-insecure-key
     ```
-
-3. Install the dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Create a `secrets.json` file inside the `gymcrowd` directory with the following structure:
-   ```json
-    {
-      "environment": "development", 
-      "database_name": "your-database-name",
-      "database_user": "your-database-user",
-      "database_password": "your-database-password",
-      "database_host": "localhost",
-      "database_port": "5432"
-    }
-   ```
-
+    
     Replace the placeholder values with your PostgreSQL database information.
 
-6. Run migrations and start the Django development server:
-    ```bash
-    python manage.py migrate
-    python manage.py runserver
-    ```
+3. Run the application using Docker Compose:
 
+    ```bash
+    docker-compose up --build
+    ```
+    
 ---
 
 ## **PostgreSQL Setup**
+
+> **Note:** This step is only required if you are running PostgreSQL outside of Docker Compose.
 
 ### **Installing PostgreSQL**
 1. Download and install PostgreSQL from the [official website](https://www.postgresql.org/).
@@ -92,68 +85,54 @@ Before running this project, ensure you have the following installed on your sys
    - **Port**: Use the default port `5432` or customize as needed.
 
 ### **Configuring PostgreSQL**
+Note: can also be done manually through pgAdmin
+
 1. Log into the PostgreSQL terminal:
+
     ```bash
     psql -U postgres
     ```
 
 2. Create a new database:
+
     ```sql
-    CREATE DATABASE gymcrowd;
+    CREATE DATABASE GymCrowd;
     ```
 
 3. Create a new user with a password:
+
     ```sql
     CREATE USER gymcrowd_user WITH PASSWORD 'your-password';
     ```
 
 4. Grant privileges to the new user:
+
     ```sql
-    GRANT ALL PRIVILEGES ON DATABASE gymcrowd TO gymcrowd_user;
+    GRANT ALL PRIVILEGES ON DATABASE GymCrowd TO gymcrowd_user;
     ```
 
 5. Exit the PostgreSQL terminal:
+
     ```bash
     \q
     ```
 
-### **Testing the Connection**
-Ensure the `secrets.json` file has the proper database credentials:
-```json
-{
-    "environment": "development", 
-    "database_name": "your-database-name",
-    "database_user": "your-database-user",
-    "database_password": "your-database-password",
-    "database_host": "localhost",
-    "database_port": "5432"
-}
-```
-
-Run the following command to verify the connection:
-```bash
-python manage.py runserver
-```
+---
 
 ## **Usage**
 
-### **Migrate Models**
-To configure models to your database run the following commands:
+### **Running the Application**
+To start the application, simply run
 
-```bash
-python manage.py makemigrations
-pytohn manage.py migrate
-```
+    docker-compose up --build
 
-### **Start the Development Server**
-To start the development server, run the following command:
-
-```bash
-python manage.py runserver
-```
+This command will:
+- Build the Docker images for the application.
+- Set up the PostgreSQL database and apply migrations.
+- Populate the database with initial data for gyms and exercises.
 
 ### **Access the Application**
-Once the server is running, you can access the application at:
+Once the application is running, you can access it at:
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ### **Test the API**
