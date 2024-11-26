@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: .
+    image: adeebk1129/gymcrowd-backend:latest
+    container_name: gymcrowd-web
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    command: >
+      sh -c "python scripts/populate_data.py &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    image: postgres:13
+    container_name: gymcrowd-db
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PWD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
