@@ -124,9 +124,7 @@ Note: can also be done manually through pgAdmin
 ### **Running the Application**
 To start the application, simply run
 
-    ```bash
     docker-compose up --build
-    ```
 
 This command will:
 - Build the Docker images for the application.
