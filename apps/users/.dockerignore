@@ -1,0 +1,63 @@
+# Ignore Python bytecode and virtual environment
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.pdb
+*.py[a-z]
+env/  # Explicitly ignore virtual environment named 'env'
+
+# Ignore test files
+*.test.py
+tests/
+coverage/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Ignore IDE/editor config files
+.vscode/
+.idea/
+*.iml
+
+# Ignore system files
+.DS_Store
+*.bak
+Thumbs.db
+
+# Ignore environment and sensitive files
+.env
+.env.*
+*.secrets
+secrets.json  # Explicitly ignore secrets.json file
+
+# Ignore Docker-related artifacts
+Dockerfile.*
+docker-compose.override.yml
+
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/
+*.spec
+
+# Ignore uploads, media, and static files
+uploads/
+media/
+staticfiles/
+static/
+
+# Ignore node_modules and package-lock.json if present
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ignore compiled dependencies
+*.so
+*.dll
+
+# Ignore compiled assets
+*.map
