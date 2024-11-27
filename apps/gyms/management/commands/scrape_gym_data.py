@@ -15,10 +15,12 @@ Dependencies:
     - `requests`: Enables HTTP requests for fetching external data.
     - `bs4.BeautifulSoup`: Parses HTML content to extract relevant data.
     - `datetime.datetime`: Handles date and time parsing for occupancy updates.
+    - `django.utils.timezone.make_aware`: Converts naive datetimes into timezone-aware datetimes.
     - `logging`: Configures logging to provide detailed runtime feedback.
 """
 
 from django.core.management.base import BaseCommand
+from django.utils.timezone import make_aware
 import logging
 import requests
 from bs4 import BeautifulSoup
@@ -120,7 +122,14 @@ class Command(BaseCommand):
                     count_text = facility.text.split("Last Count: ")[1].split("Updated:")[0].strip()
                     count = 0 if count_text == "NA" else int(count_text)
                     updated_text = facility.text.split("Updated: ")[1].split("\n")[0].strip()
-                    updated_time = datetime.strptime(updated_text, "%m/%d/%Y %I:%M %p") if updated_text else None
+                    
+                    # Convert updated time to a timezone-aware datetime
+                    updated_time = (
+                        make_aware(datetime.strptime(updated_text, "%m/%d/%Y %I:%M %p"))
+                        if updated_text
+                        else None
+                    )
+
                     percentage_element = facility.find("span", class_="barChart__value")
                     percentage_full = (
                         float(percentage_element.text.replace("%", "").strip()) 
@@ -130,7 +139,6 @@ class Command(BaseCommand):
 
                     # Fetch the gym from the database
                     gym = Gym.objects.get(name=name)
-                    logging.info(f"Found gym: {gym.name}")
 
                     # Append data for database update
                     data_list.append({
@@ -156,7 +164,7 @@ class Command(BaseCommand):
                             "last_updated": data["last_updated"],
                         },
                     )
-                    logging.info(f"Updated CrowdData for gym: {data['gym'].name}")
+                    logging.info(f"Updated: {data['gym'].name}")
                 except Exception as e:
                     logging.error(f"Error updating database: {e}")
 
