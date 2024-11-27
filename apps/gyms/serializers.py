@@ -1,23 +1,21 @@
 """
 Serializers for the Gyms App
 
-This module defines serializers for the `Gym` and `CrowdData` models,
-enabling structured serialization and deserialization of model instances into
-representations such as JSON. These serializers are used in API endpoints to
-facilitate data exchange between the client and server while adhering to validation
-rules and nested relationships.
+This module provides serializers for the `Gym` and `CrowdData` models, facilitating structured
+serialization and deserialization of these models into formats such as JSON for use in RESTful APIs.
+The serializers ensure data validation and consistency while enabling nested or flat data representations
+for API responses.
 
-The serializers include:
-1. `CrowdDataSerializer` - Serializes crowd data, including gym occupancy and percentage full.
-2. `GymSerializer` - Serializes gym details, including nested crowd data and references 
-   to user preferences and notifications by their primary keys.
+Classes:
+1. `CrowdDataSerializer`: Handles serialization and deserialization of crowd data entries.
+2. `GymSerializer`: Provides structured representation of gym details, including related crowd data,
+   user preferences, and notifications as nested or primary key references.
 
 Dependencies:
-- `rest_framework.serializers`: Provides base classes for defining serializers.
-- To avoid circular imports, nested relationships use `PrimaryKeyRelatedField` for user preferences and notifications.
+- `rest_framework.serializers`: Django REST framework classes used to define custom serializers.
+- Models `Gym` and `CrowdData` from `apps.gyms.models`.
 
-Each serializer ensures data integrity, enforces read-only or write-specific behaviors,
-and defines the structure of API responses.
+Each serializer focuses on ensuring data integrity and providing appropriate views for client-server communication.
 """
 
 from rest_framework import serializers
@@ -28,32 +26,26 @@ class CrowdDataSerializer(serializers.ModelSerializer):
     """
     Serializer for the `CrowdData` model.
 
-    This serializer handles the conversion of `CrowdData` model instances into a structured
-    representation (e.g., JSON) and vice versa. It includes fields for the gym's occupancy
-    (number of people), percentage full, and the last updated timestamp.
+    Converts `CrowdData` instances to and from structured formats, such as JSON. This serializer
+    handles fields for the gym's occupancy, percentage of capacity used, and the last updated timestamp.
+
+    Features:
+    - Links crowd data to gyms via a primary key relationship.
+    - Provides fields for occupancy and percentage full, ensuring accurate gym utilization data.
+    - Includes the timestamp of the last update for tracking real-time data.
 
     Attributes:
-        gym (PrimaryKeyRelatedField): A reference to the `Gym` model, allowing the API to
-            link crowd data to a specific gym using its primary key.
+        gym (PrimaryKeyRelatedField): Links to the associated `Gym` model, enabling the API to
+            reference gyms by their primary keys in serialized data.
 
     Meta:
-        model (CrowdData): Specifies the `CrowdData` model for serialization.
-        fields (list[str]): A list of fields included in the serialized representation:
-            - `crowd_id`: The unique identifier of the crowd data entry.
-            - `gym`: The primary key of the associated gym.
-            - `occupancy`: The number of people currently checked into the gym.
-            - `percentage_full`: The percentage of gym capacity in use (nullable).
-            - `last_updated`: Timestamp of when the crowd data was last updated.
-
-    Example:
-        Serialized Response:
-        {
-            "crowd_id": 42,
-            "gym": 3,
-            "occupancy": 32,
-            "percentage_full": 64.0,
-            "last_updated": "2024-01-01T15:00:00Z"
-        }
+        model (CrowdData): Specifies the `CrowdData` model for the serializer.
+        fields (list[str]): Fields included in the serialized representation:
+            - `crowd_id`: Unique identifier for the crowd data.
+            - `gym`: Primary key of the related gym.
+            - `occupancy`: Current number of people at the gym.
+            - `percentage_full`: Percentage of the gym's capacity that is occupied.
+            - `last_updated`: Timestamp of the last update.
     """
 
     gym = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all())
@@ -67,54 +59,36 @@ class GymSerializer(serializers.ModelSerializer):
     """
     Serializer for the `Gym` model.
 
-    This serializer provides a structured representation of gym data, including nested
-    representations for related crowd data and references to user preferences and notifications 
-    by their primary keys.
+    Converts `Gym` instances to and from structured formats like JSON. Includes nested representations
+    of associated `CrowdData` and references to `UserPreference` and `Notification` models by primary key.
+
+    Features:
+    - Provides a comprehensive view of gym data, including related crowd data.
+    - Supports nested serialization for `CrowdData`, allowing detailed responses.
+    - Exposes user preferences and notifications linked to the gym as primary key references.
 
     Attributes:
-        crowd_data (CrowdDataSerializer): A nested serializer for crowd data associated with the gym.
-            - `many=True`: Indicates that a gym can have multiple crowd data entries.
-            - `read_only=True`: Ensures that crowd data is included for read-only purposes.
-        user_preferences (PrimaryKeyRelatedField): References to user preferences linked to the gym,
-            represented by their primary keys. Avoids importing `UserPreferenceSerializer`.
-        notifications (PrimaryKeyRelatedField): References to notifications related to the gym,
-            represented by their primary keys. Avoids importing `NotificationSerializer`.
+        crowd_data (CrowdDataSerializer): Nested representation of all associated crowd data entries for the gym.
+            - `many=True`: Indicates that multiple crowd data records can exist for a gym.
+            - `read_only=True`: Specifies that the data is only available for read operations.
+        user_preferences (PrimaryKeyRelatedField): Primary key references to user preferences linked to the gym.
+        notifications (PrimaryKeyRelatedField): Primary key references to notifications related to the gym.
 
     Meta:
-        model (Gym): Specifies the `Gym` model for serialization.
-        fields (list[str]): A list of fields included in the serialized representation:
-            - `gym_id`: The unique identifier of the gym.
-            - `name`: The name of the gym.
-            - `location`: The address or location of the gym.
-            - `type`: The category or type of the gym (e.g., fitness, yoga).
-            - `crowd_data`: A nested representation of associated crowd data entries.
-            - `user_preferences`: References to associated user preferences by primary key.
-            - `notifications`: References to associated notifications by primary key.
-
-    Example:
-        Serialized Response:
-        {
-            "gym_id": 1,
-            "name": "Downtown Gym",
-            "location": "123 Main Street, Cityville",
-            "type": "Fitness",
-            "crowd_data": [
-                {
-                    "crowd_id": 42,
-                    "gym": 1,
-                    "occupancy": 32,
-                    "percentage_full": 64.0,
-                    "last_updated": "2024-01-01T15:00:00Z"
-                }
-            ],
-            "user_preferences": [12, 15],
-            "notifications": [8, 9]
-        }
+        model (Gym): Specifies the `Gym` model for the serializer.
+        fields (list[str]): Fields included in the serialized representation:
+            - `gym_id`: Unique identifier of the gym.
+            - `name`: Name of the gym.
+            - `location`: Address or general location of the gym.
+            - `type`: Category or type of the gym (e.g., fitness, yoga).
+            - `crowd_data`: Nested representations of associated crowd data entries.
+            - `user_preferences`: Primary key references to user preferences.
+            - `notifications`: Primary key references to related notifications.
     """
 
     crowd_data = CrowdDataSerializer(many=True, read_only=True)
-    user_preferences = serializers.PrimaryKeyRelatedField(many=True, read_only=True)  # Reference by primary key
-    notifications = serializers.PrimaryKeyRelatedField(many=True, read_only=True)  # Reference by primary key
+    user_preferences = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    notifications = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Gym

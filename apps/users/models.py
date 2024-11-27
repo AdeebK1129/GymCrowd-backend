@@ -1,16 +1,18 @@
 """
 Models for the Users App
 
-This module contains the database models for managing user information and preferences.
-Each model defines a specific table structure in the database, along with fields and
-relationships necessary for interacting with the users and their preferences in the application.
+This module defines the database models for managing user accounts and preferences. These
+models form the foundation for user authentication, account management, and gym-specific
+customizations. The `User` model extends Django's `AbstractBaseUser` to provide a flexible
+authentication system, while the `UserPreference` model captures user-specific gym preferences.
 
 The models include:
-1. `User` - Represents a system user, including personal details and account credentials.
-2. `UserPreference` - Represents user-specific preferences related to gym crowd levels and gym association.
+1. `User`: Represents a system user, including their personal details and authentication data.
+2. `UserPreference`: Represents user-defined preferences for gym crowd levels and associated gyms.
 
-These models utilize Django's ORM (Object-Relational Mapping) to abstract database
-operations, enabling efficient interactions without needing raw SQL.
+These models leverage Django's ORM (Object-Relational Mapping) to provide seamless database
+interactions and ensure data integrity. They are essential components of the application's
+user management and preference systems.
 """
 
 from django.db import models
@@ -20,14 +22,36 @@ from apps.gyms.models import Gym
 
 class UserManager(BaseUserManager):
     """
-    Custom manager for the User model.
+    Custom manager for the `User` model.
 
-    Provides methods for creating regular users and superusers.
+    This manager provides methods to create regular users and superusers, handling
+    the specifics of password hashing and field validation. It serves as the primary
+    interface for creating and retrieving user instances.
+
+    Methods:
+        - `create_user`: Creates a new user instance with the given credentials.
+        - `create_superuser`: Creates a superuser with elevated permissions.
+
+    Example:
+        >>> manager = UserManager()
+        >>> user = manager.create_user(username="johndoe", email="johndoe@example.com", password="password123")
     """
 
     def create_user(self, username, email, password=None, **extra_fields):
         """
-        Create and return a regular user with the given username, email, and password.
+        Creates and returns a regular user with the specified credentials.
+
+        Args:
+            username (str): The unique username for the user.
+            email (str): The user's email address, used for communication and identification.
+            password (str, optional): The plaintext password, which is securely hashed.
+            **extra_fields: Additional fields to include in the user record.
+
+        Raises:
+            ValueError: If `username` or `email` is not provided.
+
+        Returns:
+            User: The created user instance.
         """
         if not username:
             raise ValueError("The Username field is required")
@@ -41,7 +65,19 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, username, email, password=None, **extra_fields):
         """
-        Create and return a superuser with the given username, email, and password.
+        Creates and returns a superuser with elevated permissions.
+
+        Args:
+            username (str): The unique username for the superuser.
+            email (str): The superuser's email address.
+            password (str, optional): The plaintext password, which is securely hashed.
+            **extra_fields: Additional fields to include in the superuser record.
+
+        Raises:
+            ValueError: If `is_staff` or `is_superuser` is not set to `True`.
+
+        Returns:
+            User: The created superuser instance.
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -56,33 +92,25 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     """
-    Represents a user of the application.
+    Represents an authenticated user in the system.
 
-    This model defines the core attributes for a user, including their ID, username, name, email,
-    password, and creation timestamp. It is designed to provide essential
-    user account information and serves as the primary table for user-related data.
+    This model stores essential user data such as their username, email, and password.
+    It extends Django's `AbstractBaseUser` to provide custom authentication logic and
+    fields, allowing for a flexible user management system.
 
     Attributes:
         user_id (int): Auto-incrementing primary key for uniquely identifying a user.
-        username (str): Default form of authentication for user token generation.
-        name (str): The full name of the user. Stored as a `CharField` with a max length of 100.
-        email (str): Unique email address used for user identification and communication.
-            This field uses Django's `EmailField` to validate email format.
-        password (str): Hashed representation of the user's password.
-            Stored as a `CharField` with a max length of 128 as required by `AbstractBaseUser`.
-        created_at (datetime): Timestamp indicating when the user account was created.
-            Automatically populated using `auto_now_add`.
+        username (str): The unique username used for login.
+        name (str): The full name of the user.
+        email (str): The user's email address, used for identification and communication.
+        password (str): A hashed representation of the user's password.
+        created_at (datetime): Timestamp of when the user was created.
+        is_active (bool): Indicates whether the user account is active.
+        is_staff (bool): Indicates whether the user has staff privileges.
+        is_superuser (bool): Indicates whether the user has superuser privileges.
 
     Methods:
-        __str__(): Returns the string representation of the user, which is their username.
-
-    Related Models:
-        - `UserPreference`: Each user may have multiple preferences defined by the `UserPreference` model.
-
-    Example:
-        >>> user = User(username="johndoe", name="John Doe", email="johndoe@example.com")
-        >>> print(user)
-        johndoe
+        __str__(): Returns the username of the user as its string representation.
     """
 
     user_id = models.AutoField(primary_key=True)
@@ -92,9 +120,9 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=128)  # AbstractBaseUser expects this field
     created_at = models.DateTimeField(auto_now_add=True)
 
-    is_active = models.BooleanField(default=True)  # Required for AbstractBaseUser
-    is_staff = models.BooleanField(default=False)  # Required for admin interface
-    is_superuser = models.BooleanField(default=False)  # Required for admin interface
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'name']
@@ -102,50 +130,26 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     def __str__(self):
-        """
-        Provides a human-readable representation of the user.
-
-        Returns:
-            str: The username of the user.
-        """
         return self.username
 
 
 class UserPreference(models.Model):
     """
-    Represents a user's preferences related to gym crowd levels and gym selection.
+    Represents a user's preferences for gym crowd levels.
 
-    This model captures specific preferences set by a user for a particular gym. 
-    It links the user to a gym and allows customization of acceptable crowd levels.
-    The `UserPreference` model is linked to the `User` model via a foreign key, establishing 
-    a one-to-many relationship (one user can have multiple preferences). Additionally, 
-    it is linked to the `Gym` model, signifying which gym the preference applies to.
+    This model links a user to a specific gym and stores their maximum acceptable
+    crowd level. It enables users to customize their experience based on their
+    comfort levels with gym occupancy.
 
     Attributes:
-        preference_id (int): Auto-incrementing primary key for uniquely identifying a user preference.
-        user (ForeignKey): A foreign key linking to the `User` model. Deletion of the user 
-            cascades and removes associated preferences.
-        gym (ForeignKey): A foreign key linking to the `Gym` model. Deletion of the gym
-            cascades and removes associated user preferences.
-        max_crowd_level (float): The maximum crowd level the user finds acceptable at a gym.
-            Stored as a `FloatField` to allow precise crowd level specifications.
+        preference_id (int): Auto-incrementing primary key for uniquely identifying a preference.
+        user (ForeignKey): A reference to the associated `User` instance.
+        gym (ForeignKey): A reference to the associated `Gym` instance.
+        max_crowd_level (float): The user's maximum acceptable crowd level at the gym.
         created_at (datetime): Timestamp indicating when the preference was created.
-            Automatically populated using `auto_now_add`.
 
     Methods:
-        __str__(): Returns a string representation of the user preference, combining the 
-        user's name and the gym's name.
-
-    Related Models:
-        - `User`: A user can have multiple preferences for different gyms.
-        - `Gym`: A gym can have multiple user preferences indicating acceptable crowd levels.
-
-    Example:
-        >>> user = User.objects.get(name="John Doe")
-        >>> gym = Gym.objects.get(name="Downtown Gym")
-        >>> preference = UserPreference(user=user, gym=gym, max_crowd_level=0.7)
-        >>> print(preference)
-        John Doe - Downtown Gym
+        __str__(): Returns a string representation combining the user's name and gym's name.
     """
 
     preference_id = models.AutoField(primary_key=True)
@@ -155,10 +159,4 @@ class UserPreference(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        """
-        Provides a human-readable representation of the user preference.
-
-        Returns:
-            str: A string combining the user's name and the gym's name.
-        """
         return f"{self.user.name} - {self.gym.name}"

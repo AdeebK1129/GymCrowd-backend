@@ -1,23 +1,23 @@
 """
 Serializers for the Users App
 
-This module defines serializers for the `User` and `UserPreference` models,
-enabling controlled serialization and deserialization of model instances into
-representations such as JSON. These serializers are used in API endpoints to
-facilitate data exchange between the client and server while adhering to validation
-rules and nested relationships.
+This module defines serializers for the `User` and `UserPreference` models, enabling
+controlled serialization and deserialization of model instances into JSON and other
+representations. These serializers are integral to the API, providing a structured
+and validated exchange of data between clients and the server.
 
 The serializers include:
-1. `UserPreferenceSerializer` - Serializes user preferences related to gyms.
-2. `UserSerializer` - Serializes users and includes nested preferences, workouts, and notifications.
+1. `UserPreferenceSerializer`: Handles serialization of user preferences related to gyms.
+2. `UserSerializer`: Serializes user data and includes nested relationships for preferences,
+   workouts, and notifications.
 
 Dependencies:
-- `rest_framework.serializers`: Base classes for defining DRF serializers.
-- Related fields use `PrimaryKeyRelatedField` to avoid circular imports while
-  maintaining references to nested models like gyms, workouts, and notifications.
+- `rest_framework.serializers`: Provides base classes and fields for creating DRF serializers.
+- `User`, `UserPreference`, `UserWorkout`, and `Notification`: Models representing users, their
+   preferences, workouts, and notifications, respectively.
 
-Each serializer ensures data integrity, enforces read-only or write-specific behaviors,
-and defines the structure of API responses.
+Each serializer enforces data integrity, ensures appropriate permissions, and defines the structure
+of API responses to maintain consistency across the application.
 """
 
 from rest_framework import serializers
@@ -30,21 +30,35 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
     """
     Serializer for the `UserPreference` model.
 
-    This serializer handles the conversion of `UserPreference` model instances
-    into a structured representation (e.g., JSON) and vice versa. It includes
-    gym-related preferences represented by a primary key to avoid circular imports.
+    This serializer converts instances of `UserPreference` into structured data for API responses
+    and handles validation for creating or updating preferences. It links user preferences to gyms
+    using primary keys and enforces read-only behavior for user associations.
 
     Attributes:
-        gym (PrimaryKeyRelatedField): A reference to the associated gym's primary key.
+        gym (PrimaryKeyRelatedField): Represents the associated gym's primary key.
 
     Meta:
-        model (UserPreference): Specifies the `UserPreference` model for serialization.
-        fields (list[str]): A list of fields to include in the serialized representation:
-            - `preference_id`: The unique identifier of the preference.
-            - `user`: A reference to the associated `User` model.
-            - `gym`: The primary key of the associated gym.
-            - `max_crowd_level`: The maximum crowd level the user prefers.
-            - `created_at`: Timestamp of when the preference was created.
+        model (UserPreference): Specifies the model being serialized.
+        fields (list[str]): Specifies fields included in the serialization:
+            - `preference_id`: Unique ID of the preference.
+            - `user`: A reference to the associated `User` instance (read-only).
+            - `gym`: Primary key of the associated gym.
+            - `max_crowd_level`: Maximum acceptable crowd level for the user.
+            - `created_at`: Timestamp of preference creation.
+
+    Features:
+    - Read-only user field ensures preferences cannot change ownership via the API.
+    - Validates gym associations using primary keys, avoiding circular imports.
+
+    Example Usage:
+    - Serializing a preference:
+        {
+            "preference_id": 42,
+            "user": 1,
+            "gym": 7,
+            "max_crowd_level": 0.8,
+            "created_at": "2024-11-26T12:00:00Z"
+        }
     """
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -58,28 +72,50 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the `User` model.
 
-    This serializer provides a structured representation of user data, including
-    references for user preferences, workouts, and notifications represented
-    by their primary keys to avoid circular imports.
+    This serializer provides a complete representation of user data, including nested
+    relationships for preferences, workouts, and notifications. It ensures efficient
+    handling of user-related data while maintaining separation of concerns for nested models.
 
     Attributes:
-        preferences (UserPreferenceSerializer): A nested serializer for the user's
-            preferences, representing one-to-many relationships with the `UserPreference` model.
-            It is read-only and serialized using `UserPreferenceSerializer`.
-        workouts (PrimaryKeyRelatedField): A reference to the user's workouts, represented
-            by their primary keys.
-        notifications (PrimaryKeyRelatedField): A reference to the user's notifications,
-            represented by their primary keys.
+        preferences (UserPreferenceSerializer): Nested serializer for the user's preferences.
+        workouts (PrimaryKeyRelatedField): References to workouts associated with the user.
+        notifications (PrimaryKeyRelatedField): References to notifications linked to the user.
 
     Meta:
-        model (User): Specifies the `User` model for serialization.
-        fields (list[str]): A list of fields to include in the serialized representation:
-            - `user_id`: The unique identifier of the user.
-            - `name`: The full name of the user.
-            - `email`: The email address of the user.
-            - `preferences`: A nested representation of the user's gym preferences.
-            - `workouts`: A reference to the user's workouts by primary key.
-            - `notifications`: A reference to the user's notifications by primary key.
+        model (User): Specifies the model being serialized.
+        fields (list[str]): Specifies fields included in the serialization:
+            - `user_id`: Unique ID of the user.
+            - `username`: The username used for authentication.
+            - `name`: Full name of the user.
+            - `email`: Email address of the user.
+            - `preferences`: Nested preferences for gyms (read-only).
+            - `workouts`: Primary keys of the user's associated workouts.
+            - `notifications`: Primary keys of the user's associated notifications.
+
+    Features:
+    - Nested preferences allow detailed representations of user settings for gyms.
+    - Workouts and notifications use primary key references to avoid circular imports.
+    - Read-only behavior for nested fields prevents unintended updates through the API.
+
+    Example Usage:
+    - Serializing a user:
+        {
+            "user_id": 1,
+            "username": "johndoe",
+            "name": "John Doe",
+            "email": "johndoe@example.com",
+            "preferences": [
+                {
+                    "preference_id": 42,
+                    "user": 1,
+                    "gym": 7,
+                    "max_crowd_level": 0.8,
+                    "created_at": "2024-11-26T12:00:00Z"
+                }
+            ],
+            "workouts": [101, 102],
+            "notifications": [201, 202]
+        }
     """
 
     preferences = UserPreferenceSerializer(many=True, read_only=True)
@@ -89,5 +125,3 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['user_id', 'username', 'name', 'email', 'preferences', 'workouts', 'notifications']
-
-

@@ -5,13 +5,24 @@ This module defines the database model for managing notifications in the applica
 The `Notification` model captures information related to messages sent to users about
 specific gyms, including the associated user, gym, and timestamp details.
 
-The model includes:
-1. `Notification` - Represents notifications sent to users, including the message content,
-   associated user, and gym.
+Purpose:
+- The `Notification` model supports the application's messaging functionality by recording
+  updates, alerts, and user-specific information tied to gym activities or crowd levels.
+- This model facilitates user engagement by linking messages to both users and gyms,
+  ensuring personalized and contextually relevant communication.
 
-These models utilize Django's ORM (Object-Relational Mapping) to abstract database
-operations, providing efficient interactions with the underlying database while ensuring
-data integrity and relational consistency.
+Relationships:
+- `Notification` is linked to the `User` model to associate messages with specific users.
+- `Notification` is linked to the `Gym` model to provide contextual information about the
+  notification's subject (e.g., gym-related updates).
+
+Dependencies:
+- `django.db.models`: Provides the base `Model` class and field types for defining attributes.
+- `apps.users.models.User`: Imports the `User` model for establishing user-specific notifications.
+- `apps.gyms.models.Gym`: Imports the `Gym` model to associate notifications with specific gyms.
+
+The model ensures data integrity and leverages Django's ORM for database abstraction,
+allowing efficient querying and relationships.
 """
 
 from django.db import models

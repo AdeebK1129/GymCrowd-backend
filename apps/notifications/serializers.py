@@ -6,21 +6,28 @@ controlled serialization and deserialization of notification instances into
 structured representations such as JSON. The `NotificationSerializer` ensures
 data consistency and integrates references for associated users and gyms.
 
-The serializer includes:
-1. `NotificationSerializer` - Serializes notifications, including references 
-   to related users and gyms by their primary keys.
+Purpose:
+- The `NotificationSerializer` bridges the gap between the `Notification` model and 
+  API responses or incoming payloads by structuring model data in a standardized 
+  format and validating incoming requests.
+
+Features:
+- Allows the representation of user and gym relationships through their primary keys 
+  to simplify data structures and avoid potential circular imports.
+- Implements read-only constraints for user references and supports dynamic gym associations 
+  by including a queryset for validation.
 
 Dependencies:
 - `rest_framework.serializers`: Provides base classes for defining serializers.
-- To avoid circular imports, nested fields use `PrimaryKeyRelatedField` for user and gym associations.
+- `Notification`: The model being serialized, representing notifications sent to users.
+- `User` and `Gym`: Models associated with the notification, referenced via primary keys.
 
-The `NotificationSerializer` enforces read-only constraints for these references
-and ensures accurate structuring of API responses for notifications-related endpoints.
+The `NotificationSerializer` is utilized in notifications-related API endpoints to 
+facilitate structured data exchange while enforcing validation rules.
 """
 
 from rest_framework import serializers
 from apps.notifications.models import Notification
-from apps.users.models import User
 from apps.gyms.models import Gym
 
 
@@ -35,9 +42,11 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     Attributes:
         user (PrimaryKeyRelatedField): A reference to the associated user, represented
-            by their primary key. Avoids importing the `UserSerializer` to prevent circular imports.
+            by their primary key. This field is read-only to prevent modification of user
+            associations via the serializer.
         gym (PrimaryKeyRelatedField): A reference to the associated gym, represented
-            by its primary key. Avoids importing the `GymSerializer` to prevent circular imports.
+            by its primary key. This field includes a queryset to validate gym associations 
+            during deserialization.
 
     Meta:
         model (Notification): Specifies the `Notification` model for serialization.
@@ -57,9 +66,13 @@ class NotificationSerializer(serializers.ModelSerializer):
             "message": "Your workout session is scheduled for tomorrow at 10 AM.",
             "sent_at": "2024-01-01T12:00:00Z"
         }
+
+    Methods:
+        None explicitly defined; this serializer relies on DRF's base `ModelSerializer`
+        methods for validation, serialization, and deserialization.
     """
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    gym = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all(), read_only=False)
+    gym = serializers.PrimaryKeyRelatedField(queryset=Gym.objects.all())
 
     class Meta:
         model = Notification

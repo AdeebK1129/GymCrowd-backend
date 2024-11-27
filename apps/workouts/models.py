@@ -6,11 +6,11 @@ and detailed workout entries. Each model defines the structure for storing fitne
 data and their associations, providing a foundation for tracking user activities and exercise details.
 
 The models include:
-1. Exercise - Represents a specific fitness exercise, detailing its attributes 
+1. `Exercise`: Represents a specific fitness exercise, detailing its attributes 
    like targeted body parts, required equipment, and instructions.
-2. UserWorkout - Represents a user's workout session, linking it to the user 
+2. `UserWorkout`: Represents a user's workout session, linking it to the user 
    and logging the date of the session.
-3. WorkoutExercise - Represents individual exercise entries within a workout, 
+3. `WorkoutExercise`: Represents individual exercise entries within a workout, 
    capturing details like sets, repetitions, and weights used.
 
 These models utilize Django's ORM (Object-Relational Mapping) to abstract database 
@@ -27,14 +27,14 @@ class Exercise(models.Model):
 
     This model defines the structure for storing information about a specific exercise, 
     including its name, targeted body part, required equipment, and step-by-step instructions. 
-    Exercises can be linked to multiple workout sessions through the WorkoutExercise model.
+    Exercises can be linked to multiple workout sessions through the `WorkoutExercise` model.
 
     Attributes:
         exercise_id (int): Auto-incrementing primary key for uniquely identifying an exercise.
-        name (str): The name of the exercise (e.g., "Bench Press"). Stored as a CharField with a max length of 255.
+        name (str): The name of the exercise (e.g., "Bench Press"). Stored as a `CharField` with a max length of 255.
         body_part (str): The primary body part targeted by the exercise (e.g., "Chest").
         equipment (str): Optional field specifying the required equipment (e.g., "Barbell").
-        gif_url (str): Optional URL for a demonstration GIF of the exercise. Stored as a TextField.
+        gif_url (str): Optional URL for a demonstration GIF of the exercise. Stored as a `TextField`.
         target (str): The primary muscle group targeted by the exercise (e.g., "Pectorals").
         secondary_muscles (str): Optional comma-separated list of secondary muscles targeted.
         instructions (str): Detailed instructions on how to perform the exercise.
@@ -43,7 +43,7 @@ class Exercise(models.Model):
         __str__(): Returns the name of the exercise.
 
     Related Models:
-        - WorkoutExercise: Links this model to workout sessions in the UserWorkout model.
+        - `WorkoutExercise`: Links this model to workout sessions in the `UserWorkout` model.
 
     Example:
         >>> exercise = Exercise(name="Squat", body_part="Legs", target="Quadriceps")
@@ -76,11 +76,11 @@ class UserWorkout(models.Model):
 
     This model logs a workout session for a user, capturing the date of the workout 
     and linking it to the associated user. Multiple exercises can be associated with 
-    a workout session through the WorkoutExercise model.
+    a workout session through the `WorkoutExercise` model.
 
     Attributes:
         workout_id (int): Auto-incrementing primary key for uniquely identifying a workout session.
-        user (ForeignKey): A foreign key linking to the User model, representing the user who performed the workout.
+        user (ForeignKey): A foreign key linking to the `User` model, representing the user who performed the workout.
         date (date): The date the workout session took place.
         created_at (datetime): Timestamp indicating when the workout session was logged.
 
@@ -88,7 +88,7 @@ class UserWorkout(models.Model):
         __str__(): Returns a string representation of the workout, including the user's name and workout date.
 
     Related Models:
-        - WorkoutExercise: Links this model to specific exercises performed during the workout.
+        - `WorkoutExercise`: Links this model to specific exercises performed during the workout.
 
     Example:
         >>> user = User.objects.get(name="Jane Doe")
@@ -122,8 +122,8 @@ class WorkoutExercise(models.Model):
 
     Attributes:
         entry_id (int): Auto-incrementing primary key for uniquely identifying a workout exercise entry.
-        workout (ForeignKey): A foreign key linking to the UserWorkout model, representing the workout session.
-        exercise (ForeignKey): A foreign key linking to the Exercise model, representing the exercise performed.
+        workout (ForeignKey): A foreign key linking to the `UserWorkout` model, representing the workout session.
+        exercise (ForeignKey): A foreign key linking to the `Exercise` model, representing the exercise performed.
         sets (int): The number of sets performed for this exercise.
         reps (int): The number of repetitions performed in each set.
         weight (float): Optional field specifying the weight used for the exercise (in kilograms).
@@ -132,8 +132,8 @@ class WorkoutExercise(models.Model):
         __str__(): Returns a string representation of the workout exercise, including the exercise name, sets, and reps.
 
     Related Models:
-        - UserWorkout: Links this model to the workout session the exercise is part of.
-        - Exercise: Links this model to the exercise being performed.
+        - `UserWorkout`: Links this model to the workout session the exercise is part of.
+        - `Exercise`: Links this model to the exercise being performed.
 
     Example:
         >>> exercise = Exercise.objects.get(name="Bench Press")
