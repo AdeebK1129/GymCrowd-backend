@@ -85,7 +85,7 @@ Before running this project, ensure you have the following installed on your sys
    - **Port**: Use the default port `5432` or customize as needed.
 
 ### **Configuring PostgreSQL**
-Note: can also be done manually through pgAdmin
+> **Note:** can also be done manually through pgAdmin
 
 1. Log into the PostgreSQL terminal:
 
