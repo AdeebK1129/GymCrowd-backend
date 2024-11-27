@@ -32,5 +32,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  scraper:
+    build:
+      context: .
+    image: adeebk1129/gymcrowd-backend:latest
+    container_name: gymcrowd-scraper
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: >
+      sh -c "while true; do python manage.py scrape_gym_data; sleep 600; done"
+
 volumes:
   postgres_data:

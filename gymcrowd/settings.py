@@ -25,19 +25,6 @@ with open(os.path.join(BASE_DIR, 'gymcrowd', 'secrets.json')) as f:
     secrets = json.load(f)
 
 def get_secret(setting, secrets=secrets):
-    """
-    Get a secret from the secrets.json file or raise an error if it doesn't exist.
-
-    Args:
-        setting (str): The key to retrieve from secrets.json.
-        secrets (dict): The loaded secrets file.
-
-    Returns:
-        The value of the requested secret.
-
-    Raises:
-        ImproperlyConfigured: If the key is not found.
-    """
     try:
         return secrets[setting]
     except KeyError:
@@ -61,8 +48,6 @@ INSTALLED_APPS = [
     'apps.gyms',
     'apps.workouts',
     'apps.notifications',
-    "django_celery_beat",
-    "django_celery_results",
 ]
 
 REST_FRAMEWORK = {
@@ -77,15 +62,6 @@ REST_FRAMEWORK = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', 
 ]
-
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "django-db"
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-    }
-}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -130,14 +106,10 @@ DATABASES = {
     }
 }
 
-# Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -155,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.User'
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -164,7 +135,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
