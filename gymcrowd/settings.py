@@ -20,16 +20,6 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
-# Load secrets from secrets.json
-with open(os.path.join(BASE_DIR, 'gymcrowd', 'secrets.json')) as f:
-    secrets = json.load(f)
-
-def get_secret(setting, secrets=secrets):
-    try:
-        return secrets[setting]
-    except KeyError:
-        raise ImproperlyConfigured(f"Set the {setting} environment variable.")
-
 ALLOWED_HOSTS = []
 
 # Application definition
