@@ -11,22 +11,26 @@ env/
 
 # Django specific
 db.sqlite3
-*.log
 *.pot
 *.pyc
 *.pyo
 *.sqlite3
 *.db
 
-# Secrets
+# Secrets and Environment Files
 .env
 secrets.json
 secret.json
 
-# Migrations
-**/migrations/*
+# Track migrations but ignore cache
+# Ignore compiled migration files but keep the migration folder
+**/migrations/*.pyc
+**/migrations/*.pyo
+!**/migrations/__init__.py
+# Remove the following line to allow migration files to be committed
+# **/migrations/*
 
-# IDEs and editors
+# IDEs and Editors
 .idea/
 .vscode/
 *.swp
@@ -46,7 +50,6 @@ htmlcov/
 .cache/
 .nox/
 pytest_cache/
-__pycache__/
 
 # Testing
 *.pytest_cache
@@ -62,10 +65,11 @@ dist/
 build/
 *.whl
 
-# Logs and debug output
+# Logs and Debug Output
 *.log
 *.out
 *.err
+logs/
 
 # Dependencies
 *.lock

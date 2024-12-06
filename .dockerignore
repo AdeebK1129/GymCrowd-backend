@@ -32,7 +32,6 @@ Thumbs.db
 .env
 .env.*
 *.secrets
-secrets.json  # Explicitly ignore secrets.json file
 
 # Ignore Docker-related artifacts
 Dockerfile.*
