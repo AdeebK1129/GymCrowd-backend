@@ -4,6 +4,10 @@
 
 GymCrowd is a gym management and workout tracking platform tailored for fitness enthusiasts. The platform enables users to log workouts, set gym crowd level preferences, and receive notifications about gym activities. With robust user authentication and real-time updates, GymCrowd ensures a personalized and secure fitness experience.
 
+## Repositories  
+- **Frontend Repository**: [Link to Android repo](https://github.com/CamdenKeller/GymCrowd/tree/new-master)  
+- **Backend Repository**: [Link to Backend repo (this)](https://github.com/AdeebK1129/GymCrowd-backend)
+
 ## **Features**
 - **User Authentication**: Secure user sign-up, login, token-based authentication, and logout functionality.
 - **Workout Tracking**: Log workouts, add exercises to specific sessions, and view detailed workout histories.
