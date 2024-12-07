@@ -35,6 +35,18 @@ GymCrowd is a gym management and workout tracking platform tailored for fitness 
 ## **Getting Started**
 
 ### **Prerequisites**
+For Simply Viewing:
+- **None!**
+
+Our backend is fully deployed and available at the production base URL:
+
+**Base URL:** [http://34.86.153.211:8000/](http://34.86.153.211:8000/)
+
+You can access all endpoints specified in [API Specification](#api-specification) directly through this URL. However, if you wish to test or develop the backend locally, you can follow the instructions below to see how we set up the application on our local machines initially.
+
+---
+
+For Devs:
 Before running this project, ensure you have the following installed on your system:
 - **Python** (>=3.8)
 - **PostgreSQL** (>=13.x)
