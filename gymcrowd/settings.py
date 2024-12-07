@@ -22,7 +22,9 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 ALLOWED_HOSTS = ['127.0.0.1',
     '10.0.2.2',  # Required for Android Emulator access
-    'localhost',]
+    'localhost',
+    '34.86.153.211'
+    ]
 
 # Application definition
 
