@@ -40,7 +40,7 @@ For Simply Viewing:
 
 Our backend is fully deployed and available at the production base URL:
 
-**Base URL:** [http://34.86.153.211:8000/](http://34.86.153.211:8000/)
+**Base URL:** [http://34.86.153.211:8000/](http://34.86.153.211:8000/) **CURRENTLY DOWN FOR MAINTENANCE**
 
 You can access all endpoints specified in [API Specification](#api-specification) directly through this URL. However, if you wish to test or develop the backend locally, you can follow the instructions below to see how we set up the application on our local machines initially.
 
